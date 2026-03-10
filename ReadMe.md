@@ -35,3 +35,17 @@ String content = Files.readString(levelFile);
 ```
 
 Tentatively, all 3 JSON datafiles are to be written diretly into reasources
+
+
+
+
+## Running the Project
+
+This project uses Maven.
+
+Compile the project in terminal : 
+1 : cd galactype (root folder in line with pom.xml)
+2 : mvn compile
+
+Run the application: // TODO for future reference 
+1 : mvn javafx:run
