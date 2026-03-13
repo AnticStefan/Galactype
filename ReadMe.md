@@ -35,3 +35,64 @@ String content = Files.readString(levelFile);
 ```
 
 Tentatively, all 3 JSON datafiles are to be written diretly into reasources
+
+
+
+
+## Running the Project
+
+This project uses Maven.
+
+Compile the project in terminal : 
+
+```
+cd galactype (root folder in line with pom.xml)
+mvn compile
+```
+
+Run the application: // TODO for future reference 
+
+```
+
+mvn javafx:run
+```
+
+## Git Workflow (Team Conventions)
+
+All development should occur on the **dev branch** unless otherwise instructed.
+
+Before starting work each session:
+
+```
+git switch dev
+git pull
+```
+
+This ensures your local copy is up to date before making changes.
+
+### Committing Changes
+
+After making changes: 
+
+```
+cd group22 
+git add <file>
+git commit -m "Short description of change"
+git push
+```
+
+Example:
+
+```
+git add ReadMe.md
+git commit -m "Added compile and run instructions"
+git push
+```
+
+### General Rules
+
+- Always `git pull` before starting work.
+- Make **small commits** with clear messages.
+- Avoid editing the same lines of code as other developers when possible.
+- Do not commit build artifacts such as the `target/` directory.
+- Ensure the project compiles (`mvn compile`) before pushing.
