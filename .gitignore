@@ -1,1 +1,20 @@
 .env
+
+# Maven build output
+galactype/target/
+target/
+
+# Compiled Java classes
+*.class
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.project
+*.classpath
+.settings/
