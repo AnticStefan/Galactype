@@ -53,7 +53,7 @@ mvn compile
 Run the application: // TODO for future reference 
 
 ```
-cd galactype (root folder in line with pom.xml)
+
 mvn javafx:run
 ```
 
@@ -75,7 +75,7 @@ This ensures your local copy is up to date before making changes.
 After making changes: 
 
 ```
-cd group22 / cd ~/Desktop/Projects/Galactype/group22 (make sure you are in group22 outermost folder)
+cd group22 
 git add <file>
 git commit -m "Short description of change"
 git push
