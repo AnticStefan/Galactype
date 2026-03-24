@@ -1,6 +1,12 @@
 # File Completion Tracking
 
 ## Classes Done
+- SessionResult
+- PlayerSettings
+- TypingStatistics
+- Account (abstract)
+- PlayerAccount
+- TeacherAccount
 
 ## Enums Done
 - PowerUpType
