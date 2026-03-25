@@ -24,7 +24,7 @@ public class SessionResult {
     public int getLevelPlayed() {
         return levelPlayed;
     }
-    
+
     public int getScore() {
         return score;
     }

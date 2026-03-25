@@ -11,7 +11,7 @@ class PlayerAccountTest {
 
     @BeforeEach
     void setUp() {
-        player = new PlayerAccount("alice", "password123");
+        player = new PlayerAccount("eric", "password69");
     }
 
     @Test
