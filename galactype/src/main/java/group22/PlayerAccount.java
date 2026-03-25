@@ -18,30 +18,32 @@ public class PlayerAccount extends Account {
         this.settings = new PlayerSettings();
     }
 
-
-    /**
-     * Basic Getters and setters
-     */
     public TypingStatistics getStatistics() {
         return statistics;
     }
+    
     public int getLevelProgress() {
         return levelProgress;
     }
+
     public void setLevelProgress(int level) {
         this.levelProgress = level;
     }
+
     public int getHighScore(int level) {
         return highScores.getOrDefault(level, 0);
     }
+
     public void updateHighScore(int level, int score) {
         if (score > getHighScore(level)) {
             highScores.put(level, score);
         }
     }
+
     public PlayerSettings getSettings() {
         return settings;
     }
+
     public void resetStatistics() {
         statistics.reset(); 
     }
