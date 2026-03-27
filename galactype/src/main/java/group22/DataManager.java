@@ -23,10 +23,12 @@ public class DataManager {
     private final String basePath;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public DataManager(String basepath){ // class constructor (gets rid of warnings)
+    // Stores the base directory used for reading and writing game data
+    public DataManager(String basepath){ 
         this.basePath = basepath; 
     }
 
+    // Saves all account records to the accounts data file
     public void saveAccounts(List<Account> accounts){
         Path accountsPath = Paths.get(basePath, "accounts.json");
         try {
@@ -39,6 +41,7 @@ public class DataManager {
         }
     }
 
+    // Loads all saved accounts and rebuilds their concrete account types
     public List<Account> loadAccounts(){
         Path accountsPath = Paths.get(basePath, "accounts.json");
         List<Account> accounts = new ArrayList<>();
@@ -72,6 +75,7 @@ public class DataManager {
         return accounts;
     }
 
+    // Saves the high score table entries to disk
     public void saveHighScores(HighScoreTable table){
         Path highScoresPath = Paths.get(basePath, "highscores.json");
         try {
@@ -84,6 +88,7 @@ public class DataManager {
         }
     }
 
+    // Loads saved high score entries into a new high score table
     public HighScoreTable loadHighScoreTable(){
         Path highScoresPath = Paths.get(basePath, "highscores.json");
         HighScoreTable table = new HighScoreTable(highScoresPath.toString(), 100);
@@ -94,7 +99,7 @@ public class DataManager {
 
         try {
             String json = Files.readString(highScoresPath);
-            Type listType = new TypeToken<List<HighScoreEntry>>(){}.getType(); // weird inner class magic
+            Type listType = new TypeToken<List<HighScoreEntry>>(){}.getType(); 
             List<HighScoreEntry> entries = gson.fromJson(json, listType);
             if (entries != null) {
                 for (HighScoreEntry entry : entries) {
@@ -108,6 +113,7 @@ public class DataManager {
         return table;
     }
 
+    // Saves one player's progress into that player's own file
     public void savePlayerProgress(PlayerAccount player){
         Path playerProgressPath = Paths.get(basePath, "player-progress", player.getUsername() + ".json");
         try {
@@ -120,6 +126,7 @@ public class DataManager {
         }
     }
 
+    // Loads the saved progress file for a specific player
     public PlayerAccount loadPlayerProgress(String username){
         Path playerProgressPath = Paths.get(basePath, "player-progress", username + ".json");
 
@@ -136,10 +143,12 @@ public class DataManager {
         }
     }
 
+    // Converts an object into its JSON representation
     private String toJson(Object object){
         return gson.toJson(object);
     }
 
+    // Rebuilds an object from JSON using the requested class type
     private Object fromJson(String json, Class<?> type){
         return gson.fromJson(json, type);
     }
