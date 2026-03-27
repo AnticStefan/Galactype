@@ -5,7 +5,7 @@ public class Meteor{
     //instance variables 
     private Word word;
     private float xPosition;
-    private float yPosition = 550; //starts above the screen height 
+    private float yPosition = 0f; // spawn at top of screen (JavaFX: y=0 is top)
     private float speed;           //tentative 
 
     private int typedProgress;
@@ -55,7 +55,11 @@ public class Meteor{
     }
 
     //method for updating the users typing progress on the meteor
-   public void incrementTypedProgress(){
+    public void resetTypedProgress(){
+        this.typedProgress = 0;
+    }
+
+    public void incrementTypedProgress(){
         this.typedProgress++;
         if(this.typedProgress >= this.word.getLength()){
             destroy();
@@ -65,12 +69,12 @@ public class Meteor{
     //method to check if the meteor has reached the bottom of the screen
     //NOTE: Can adjust this to maybe check screenheight -50 to make it easier for user and it might look visually better 
     public boolean hasReachedBottom(float screenHeight){
-        return this.yPosition <= screenHeight;
+        return this.yPosition >= screenHeight;
     }
 
     public void update(float deltaTime){
         //update the y position based on speed and deltaTime
-        this.yPosition -= this.speed * deltaTime;
+        this.yPosition += this.speed * deltaTime;
     }
 
 }
