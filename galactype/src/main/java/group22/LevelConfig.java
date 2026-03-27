@@ -13,14 +13,18 @@ public class LevelConfig {
     private final float powerUpSpawnChance;
     private final String backgroundAsset;
 
-    public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed,long spawnIntervalMs, DifficultyLevel difficulty, long durationMs) {
+    public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed, long spawnIntervalMs, DifficultyLevel difficulty, long durationMs) {
+        this(levelNumber, maxMeteors, meteorSpeed, spawnIntervalMs, difficulty, durationMs, 0.05f);
+    }
+
+    public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed, long spawnIntervalMs, DifficultyLevel difficulty, long durationMs, float powerUpSpawnChance) {
         this.levelNumber = levelNumber;
         this.maxMeteors = maxMeteors;
         this.meteorSpeed = meteorSpeed;
         this.spawnIntervalMs = spawnIntervalMs;
         this.wordDifficulty = difficulty;
         this.durationMs = durationMs;
-        this.powerUpSpawnChance = 0.1f;
+        this.powerUpSpawnChance = powerUpSpawnChance;
         this.backgroundAsset = null;
     }
 
