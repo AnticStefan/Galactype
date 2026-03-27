@@ -12,15 +12,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import group22.enums.AccountType;
 
 public class DataManager {
 
-    private String basePath; 
+    private final String basePath;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public DataManager(String basepath){ // class constructor 
+    public DataManager(String basepath){ // class constructor (gets rid of warnings)
         this.basePath = basepath; 
     }
 
@@ -75,7 +78,7 @@ public class DataManager {
             if (highScoresPath.getParent() != null) {
                 Files.createDirectories(highScoresPath.getParent());
             }
-            Files.writeString(highScoresPath, gson.toJson(table));
+            Files.writeString(highScoresPath, gson.toJson(table.getTopEntries()));
         } catch (IOException e) {
             System.err.println("Failed to save high scores: " + e.getMessage());
         }
@@ -83,18 +86,26 @@ public class DataManager {
 
     public HighScoreTable loadHighScoreTable(){
         Path highScoresPath = Paths.get(basePath, "highscores.json");
+        HighScoreTable table = new HighScoreTable(highScoresPath.toString(), 100);
 
         if (!Files.exists(highScoresPath)) {
-            return null;
+            return table;
         }
 
         try {
             String json = Files.readString(highScoresPath);
-            return gson.fromJson(json, HighScoreTable.class);
+            Type listType = new TypeToken<List<HighScoreEntry>>(){}.getType(); // weird inner class magic
+            List<HighScoreEntry> entries = gson.fromJson(json, listType);
+            if (entries != null) {
+                for (HighScoreEntry entry : entries) {
+                    table.addEntry(entry.getUsername(), entry.getScore(), entry.getLevel());
+                }
+            }
         } catch (IOException e) {
             System.err.println("Failed to load high scores: " + e.getMessage());
-            return null;
         }
+
+        return table;
     }
 
     public void savePlayerProgress(PlayerAccount player){
@@ -129,8 +140,8 @@ public class DataManager {
         return gson.toJson(object);
     }
 
-    private Object fromJson(String json, Class type){
+    private Object fromJson(String json, Class<?> type){
         return gson.fromJson(json, type);
     }
-    
+   
 }
