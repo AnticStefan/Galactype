@@ -1,5 +1,5 @@
 //NOTE: im not sure if we want to organize this into a package so if so, lmk 
-package group22.classes;
+package group22;
 
 import group22.enums.PowerUpType;
 
@@ -10,7 +10,7 @@ public class PowerUp{
     private long startTimeMS; 
     private boolean isActive; 
 
-    //constructer w private variables 
+    //constructor for private variables 
     public PowerUp(PowerUpType type, long duration){
         this.type = type; 
         this.duration = duration; 
@@ -29,6 +29,7 @@ public class PowerUp{
         this.isActive = false; 
     }
 
+    //checks if powerup is active and if it has expired, if expired it deactivates the powerup and returns false, otherwise returns true
     public boolean isActive(){
         if(isActive){
             long elapsedMS = System.currentTimeMillis() - this.startTimeMS;
@@ -39,6 +40,7 @@ public class PowerUp{
         return this.isActive;
     }
 
+    //checks if powerup is active and if it has expired, if expired it deactivates the powerup and returns true, otherwise returns false
     public boolean isExpired(){
         if(isActive){
             long elapsedMS = System.currentTimeMillis() - this.startTimeMS;
@@ -47,6 +49,7 @@ public class PowerUp{
         return false; 
     }
 
+    //getters
     public PowerUpType getType(){
         return this.type;
     }
