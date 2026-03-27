@@ -42,11 +42,7 @@ public class PowerUp{
 
     //checks if powerup is active and if it has expired, if expired it deactivates the powerup and returns true, otherwise returns false
     public boolean isExpired(){
-        if(isActive){
-            long elapsedMS = System.currentTimeMillis() - this.startTimeMS;
-            return elapsedMS >= this.duration;
-        }
-        return false; 
+       return !isActive();
     }
 
     //getters
