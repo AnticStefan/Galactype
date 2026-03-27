@@ -77,7 +77,7 @@ class PowerUpTest {
 
     @Test
     void isExpiredReturnsTrueAfterDurationExpires() throws InterruptedException {
-        PowerUp shortPowerUp = new PowerUp(PowerUpType.SHEILD, 50L);
+        PowerUp shortPowerUp = new PowerUp(PowerUpType.SHIELD, 50L);
         shortPowerUp.activate();
         Thread.sleep(100);
         assertTrue(shortPowerUp.isExpired());

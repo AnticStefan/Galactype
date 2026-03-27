@@ -161,7 +161,11 @@ public class WordBank {
                 throw new IllegalStateException("Unexpected difficulty value: " + difficulty);
         }
 
-        //random index generator to get random word 
+        if (wordList.isEmpty()) {
+            throw new IllegalStateException("No words loaded for difficulty: " + difficulty);
+        }
+
+        //random index generator to get random word
         int randomIndex = (int) (Math.random() * wordList.size());
 
         //returning the wordlist at the random index geerated above and at the set difficulty level
@@ -193,6 +197,9 @@ public class WordBank {
     
     
     public Word getPowerUpWord(DifficultyLevel difficulty){
+        if (powerUpWords.isEmpty()) {
+            throw new IllegalStateException("No power-up words loaded");
+        }
         int randomIndex = (int) (Math.random() * powerUpWords.size());
         return powerUpWords.get(randomIndex);
     }
