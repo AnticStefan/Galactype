@@ -23,6 +23,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -56,16 +57,14 @@ public class MainMenu extends Application {
         title.setTextFill(Color.web("#ffe6ff"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d", 0.55)));
 
-        Label subtitle = new Label("Main Menu");
-        subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 28));
-        subtitle.setTextFill(Color.web("#e2c0ff"));
-
+        Button playButton = makeMenuButton("Play");
         Button loginButton = makeMenuButton("Login");
         Button howToPlayButton = makeMenuButton("How to Play");
         Button highScoresButton = makeMenuButton("High Scores");
         Button teacherControlButton = makeMenuButton("Teacher Control");
         Button exitButton = createTopRightButton("Exit");
 
+        playButton.setOnAction(e -> openPlayMenu(stage));
         loginButton.setDisable(false);
         howToPlayButton.setDisable(false);
         teacherControlButton.setDisable(false);
@@ -78,15 +77,70 @@ public class MainMenu extends Application {
             stage.close();
         });
 
-        VBox buttonColumn = new VBox(18, loginButton, howToPlayButton, highScoresButton, teacherControlButton);
+        VBox buttonColumn = new VBox(18, playButton, loginButton, howToPlayButton, highScoresButton, teacherControlButton);
         buttonColumn.setAlignment(Pos.CENTER);
 
-        VBox mainContent = new VBox(18, title, subtitle, buttonColumn);
+        VBox mainContent = new VBox(22, title, buttonColumn);
         mainContent.setAlignment(Pos.CENTER);
-        mainContent.setPadding(new Insets(8, 28, 28, 28));
-        mainContent.setTranslateY(-28);
+        mainContent.setPadding(new Insets(18, 28, 28, 28));
+        mainContent.setTranslateY(-10);
 
         StackPane root = new StackPane(createDecoratedBackground(), mainContent, exitButton);
+        StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(exitButton, new Insets(14));
+        root.setPadding(new Insets(16));
+        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+    }
+
+    private void openPlayMenu(Stage stage) {
+        if (gameController.getAccountManager().getCurrentAccount() == null) {
+            stage.setScene(createGuestWarningScene(stage));
+            return;
+        }
+
+        stage.setScene(new PlayMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage))));
+    }
+
+    private Scene createGuestWarningScene(Stage stage) {
+        Label title = new Label("Not Logged In");
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 48));
+        title.setTextFill(Color.web("#ffe6ff"));
+        title.setEffect(new DropShadow(12, Color.web("#2b004d", 0.55)));
+
+        Label message = new Label(
+                "You are not logged in.\n\nIf you continue, your game progress will not be saved."
+        );
+        message.setFont(Font.font("Arial", 18));
+        message.setTextFill(Color.web("#f0e5ff"));
+        message.setWrapText(true);
+        message.setMaxWidth(460);
+        message.setBackground(new Background(new BackgroundFill(Color.web("#250042", 0.78), new CornerRadii(18), Insets.EMPTY)));
+        message.setPadding(new Insets(20));
+        message.setEffect(new DropShadow(18, Color.web("#130021", 0.45)));
+
+        Button okButton = makeSecondaryButton("I Understand");
+        setWarningButtonSize(okButton);
+        okButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        okButton.setOnAction(e -> stage.setScene(new PlayMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
+
+        Button backButton = makeMenuButton("Back to Main Menu");
+        setWarningButtonSize(backButton);
+        backButton.setOnAction(e -> stage.setScene(createMainMenuScene(stage)));
+
+        HBox buttonGroup = new HBox(16, backButton, okButton);
+        buttonGroup.setAlignment(Pos.CENTER);
+
+        VBox content = new VBox(22, title, message, buttonGroup);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(28));
+
+        Button exitButton = createTopRightButton("Exit");
+        exitButton.setOnAction(e -> {
+            Platform.exit();
+            stage.close();
+        });
+
+        StackPane root = new StackPane(createDecoratedBackground(), content, exitButton);
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
         root.setPadding(new Insets(16));
@@ -180,6 +234,26 @@ public class MainMenu extends Application {
         button.setPrefHeight(52);
         button.setEffect(new DropShadow(10, Color.web("#6100aa", 0.45)));
         return button;
+    }
+
+    private Button makeSecondaryButton(String text) {
+        Button button = new Button(text);
+        button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        button.setTextFill(Color.web("#ffe6ff"));
+        button.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        button.setPrefWidth(160);
+        button.setPrefHeight(38);
+        button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        return button;
+    }
+
+    private void setWarningButtonSize(Button button) {
+        button.setPrefWidth(220);
+        button.setMinWidth(220);
+        button.setMaxWidth(220);
+        button.setPrefHeight(52);
+        button.setMinHeight(52);
+        button.setMaxHeight(52);
     }
 
     static Button createTopRightButton(String text) {
