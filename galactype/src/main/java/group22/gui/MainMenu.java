@@ -23,7 +23,6 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -55,6 +54,7 @@ public class MainMenu extends Application {
         Label title = new Label("Galactype");
         title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 64));
         title.setTextFill(Color.web("#ffe6ff"));
+        title.setEffect(new DropShadow(12, Color.web("#2b004d", 0.55)));
 
         Label subtitle = new Label("Main Menu");
         subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 28));
@@ -64,13 +64,13 @@ public class MainMenu extends Application {
         Button howToPlayButton = makeMenuButton("How to Play");
         Button highScoresButton = makeMenuButton("High Scores");
         Button teacherControlButton = makeMenuButton("Teacher Control");
-        Button exitButton = makeSmallExitButton("Exit");
+        Button exitButton = createTopRightButton("Exit");
 
         loginButton.setDisable(false);
         howToPlayButton.setDisable(false);
         teacherControlButton.setDisable(false);
         highScoresButton.setOnAction(e -> stage.setScene(new HighScoreMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
-        loginButton.setOnAction(e -> stage.setScene(new LoginMenu().createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
+        loginButton.setOnAction(e -> stage.setScene(new LoginMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         howToPlayButton.setOnAction(e -> stage.setScene(new HowToPlayMenu().createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         teacherControlButton.setOnAction(e -> stage.setScene(new TeacherControlMenu().createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         exitButton.setOnAction(e -> {
@@ -78,18 +78,13 @@ public class MainMenu extends Application {
             stage.close();
         });
 
-        GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(18);
-        buttonGrid.setVgap(18);
-        buttonGrid.setAlignment(Pos.CENTER);
-        buttonGrid.add(loginButton, 0, 0);
-        buttonGrid.add(howToPlayButton, 1, 0);
-        buttonGrid.add(highScoresButton, 0, 1);
-        buttonGrid.add(teacherControlButton, 1, 1);
+        VBox buttonColumn = new VBox(18, loginButton, howToPlayButton, highScoresButton, teacherControlButton);
+        buttonColumn.setAlignment(Pos.CENTER);
 
-        VBox mainContent = new VBox(24, title, subtitle, buttonGrid);
+        VBox mainContent = new VBox(18, title, subtitle, buttonColumn);
         mainContent.setAlignment(Pos.CENTER);
-        mainContent.setPadding(new Insets(28));
+        mainContent.setPadding(new Insets(8, 28, 28, 28));
+        mainContent.setTranslateY(-28);
 
         StackPane root = new StackPane(createDecoratedBackground(), mainContent, exitButton);
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
@@ -187,7 +182,7 @@ public class MainMenu extends Application {
         return button;
     }
 
-    private Button makeSmallExitButton(String text) {
+    static Button createTopRightButton(String text) {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
