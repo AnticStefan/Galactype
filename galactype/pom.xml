@@ -51,7 +51,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>group22.guiMainMenu</mainClass>
+                    <mainClass>group22.gui.MainMenu</mainClass>
                 </configuration>
             </plugin>
             <plugin>
