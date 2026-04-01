@@ -61,7 +61,7 @@ public class LoginMenu {
     }
 
     private VBox createRoleSelectionContent(StackPane root, Runnable returnToMain) {
-        Label title = createScreenTitle();
+        Label title = createScreenTitle("Login");
 
         Button teacherButton = makePrimaryButton("Login as Teacher");
         teacherButton.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.TEACHER, root, returnToMain)));
@@ -69,17 +69,147 @@ public class LoginMenu {
         Button studentButton = makePrimaryButton("Login as Student");
         studentButton.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.PLAYER, root, returnToMain)));
 
+        Button createAccountButton = makeSecondaryButton("Create Account");
+        createAccountButton.setPrefWidth(220);
+        createAccountButton.setOnAction(e -> swapContent(root, createRegistrationContent(root, returnToMain)));
+
         Button backButton = makeSecondaryButton("Back to Main Menu");
         backButton.setOnAction(e -> returnToMain.run());
 
-        VBox content = new VBox(22, title, teacherButton, studentButton, backButton);
+        VBox content = new VBox(18, title, teacherButton, studentButton, createAccountButton, backButton);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(28));
         return content;
     }
 
+    private VBox createRegistrationContent(StackPane root, Runnable returnToMain) {
+        Label title = createScreenTitle("Create Account", 36);
+
+        // Role toggle state
+        final AccountType[] selectedType = {AccountType.PLAYER};
+
+        Button studentToggle = makePrimaryButton("Student");
+        Button teacherToggle = makeSecondaryButton("Teacher");
+        studentToggle.setPrefWidth(140);
+        studentToggle.setPrefHeight(38);
+        studentToggle.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        teacherToggle.setPrefWidth(140);
+        teacherToggle.setPrefHeight(38);
+
+        studentToggle.setOnAction(e -> {
+            selectedType[0] = AccountType.PLAYER;
+            studentToggle.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;");
+            teacherToggle.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        });
+        teacherToggle.setOnAction(e -> {
+            selectedType[0] = AccountType.TEACHER;
+            teacherToggle.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;");
+            studentToggle.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        });
+
+        HBox roleToggle = new HBox(10, studentToggle, teacherToggle);
+        roleToggle.setAlignment(Pos.CENTER_LEFT);
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Choose a username");
+        styleInputField(usernameField);
+
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Choose a password");
+        styleInputField(passwordField);
+
+        PasswordField confirmField = new PasswordField();
+        confirmField.setPromptText("Confirm password");
+        styleInputField(confirmField);
+
+        Label messageLabel = new Label(" ");
+        messageLabel.setFont(Font.font("Arial", 15));
+        messageLabel.setTextFill(Color.web("#ffcce8"));
+        messageLabel.setWrapText(true);
+        messageLabel.setMaxWidth(320);
+
+        Button registerButton = makePrimaryButton("Create Account");
+        registerButton.setPrefWidth(180);
+        registerButton.setOnAction(e -> attemptRegister(
+                selectedType, usernameField, passwordField, confirmField, messageLabel));
+
+        Button backButton = makeSecondaryButton("Back to Login");
+        backButton.setOnAction(e -> swapContent(root, createRoleSelectionContent(root, returnToMain)));
+
+        HBox actions = new HBox(14, registerButton, backButton);
+        actions.setAlignment(Pos.CENTER_LEFT);
+
+        VBox formCard = new VBox(
+                10,
+                createFieldLabel("Account Type"), roleToggle,
+                createFieldLabel("Username"), usernameField,
+                createFieldLabel("Password"), passwordField,
+                createFieldLabel("Confirm Password"), confirmField,
+                messageLabel,
+                actions
+        );
+        formCard.setAlignment(Pos.CENTER_LEFT);
+        formCard.setMaxWidth(340);
+        formCard.setPadding(new Insets(22));
+        formCard.setBackground(new Background(new BackgroundFill(Color.web("#250042", 0.78), new CornerRadii(18), Insets.EMPTY)));
+        formCard.setEffect(new DropShadow(18, Color.web("#130021", 0.45)));
+
+        VBox content = new VBox(24, title, formCard);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(28));
+        return content;
+    }
+
+    private void attemptRegister(AccountType[] selectedType, TextField usernameField,
+                                  PasswordField passwordField, PasswordField confirmField,
+                                  Label messageLabel) {
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+        String confirm = confirmField.getText();
+
+        if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+            messageLabel.setText("Please fill in all fields.");
+            messageLabel.setTextFill(Color.web("#ffd1dc"));
+            return;
+        }
+
+        if (username.length() < 3) {
+            messageLabel.setText("Username must be at least 3 characters.");
+            messageLabel.setTextFill(Color.web("#ffd1dc"));
+            return;
+        }
+
+        if (password.length() < 4) {
+            messageLabel.setText("Password must be at least 4 characters.");
+            messageLabel.setTextFill(Color.web("#ffd1dc"));
+            return;
+        }
+
+        if (!password.equals(confirm)) {
+            messageLabel.setText("Passwords do not match.");
+            messageLabel.setTextFill(Color.web("#ffd1dc"));
+            confirmField.clear();
+            return;
+        }
+
+        boolean created = gameController.getAccountManager().createAccount(username, password, selectedType[0]);
+        if (!created) {
+            messageLabel.setText("Username already taken. Please choose another.");
+            messageLabel.setTextFill(Color.web("#ffd1dc"));
+            usernameField.clear();
+            return;
+        }
+
+        gameController.getAccountManager().save();
+        messageLabel.setText("Account created! You can now log in.");
+        messageLabel.setTextFill(Color.web("#d8ffd8"));
+        usernameField.clear();
+        passwordField.clear();
+        confirmField.clear();
+    }
+
     private VBox createCredentialContent(AccountType accountType, StackPane root, Runnable returnToMain) {
-        Label title = createScreenTitle();
+        Label title = createScreenTitle("Login");
 
         Label roleLabel = new Label(accountType == AccountType.TEACHER ? "Teacher Login" : "Student Login");
         roleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -169,9 +299,13 @@ public class LoginMenu {
         root.getChildren().set(1, content);
     }
 
-    private Label createScreenTitle() {
-        Label title = new Label("Login");
-        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 56));
+    private Label createScreenTitle(String text) {
+        return createScreenTitle(text, 56);
+    }
+
+    private Label createScreenTitle(String text, int fontSize) {
+        Label title = new Label(text);
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, fontSize));
         title.setTextFill(Color.web("#ffe6ff"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d", 0.55)));
         return title;

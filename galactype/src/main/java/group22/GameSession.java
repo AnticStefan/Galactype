@@ -16,6 +16,8 @@ public class GameSession implements Observable {
     private static final float SCREEN_WIDTH = 800f;
     private static final float SPAWN_MARGIN = 50f;
     private static final long POWER_UP_DURATION_MS = 5000L;
+    // Must match the CHAR_WIDTH estimate used in GameScreen for text rendering
+    private static final double CHAR_WIDTH = 8.4; // change later
 
     private final List<Meteor> activeMeteors;
     private final List<PowerUp> activePowerUps;
@@ -167,16 +169,42 @@ public class GameSession implements Observable {
     }
 
     private void spawnMeteor() {
-        float x = SPAWN_MARGIN + random.nextFloat() * (SCREEN_WIDTH - 2 * SPAWN_MARGIN);
-
+        // Pick a word, retrying up to 20 times to avoid duplicate starting letters
         Word word;
-        if (random.nextFloat() < levelConfig.getPowerUpSpawnChance()) {
-            word = wordBank.getPowerUpWord(levelConfig.getWordDifficulty());
-        } else {
-            word = wordBank.getRandomWord(levelConfig.getWordDifficulty());
+        int maxRetries = 20;
+        do {
+            if (random.nextFloat() < levelConfig.getPowerUpSpawnChance()) {
+                word = wordBank.getPowerUpWord(levelConfig.getWordDifficulty());
+            } else {
+                word = wordBank.getRandomWord(levelConfig.getWordDifficulty());
+            }
+            maxRetries--;
+        } while (maxRetries > 0 && hasConflictingFirstLetter(word));
+
+        // Clamp x so the word label doesn't overflow the screen edges
+        double halfWordWidth = (word.getText().length() * CHAR_WIDTH) / 2.0;
+        float minX = (float) (SPAWN_MARGIN + halfWordWidth);
+        float maxX = (float) (SCREEN_WIDTH - SPAWN_MARGIN - halfWordWidth);
+        if (minX > maxX) {
+            minX = maxX = SCREEN_WIDTH / 2f; // fallback for extremely long words
         }
+        float x = minX + random.nextFloat() * (maxX - minX);
 
         activeMeteors.add(new Meteor(word, x, levelConfig.getMeteorSpeed()));
+    }
+
+    private boolean hasConflictingFirstLetter(Word candidate) {
+        if (candidate.getText().isEmpty()) return false;
+        char first = Character.toLowerCase(candidate.getText().charAt(0));
+        for (Meteor meteor : activeMeteors) {
+            if (!meteor.isDestroyed()) {
+                String text = meteor.getWord().getText();
+                if (!text.isEmpty() && Character.toLowerCase(text.charAt(0)) == first) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void checkMeteorCollisions() {

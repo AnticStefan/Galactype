@@ -200,8 +200,19 @@ public class WordBank {
         if (powerUpWords.isEmpty()) {
             throw new IllegalStateException("No power-up words loaded");
         }
-        int randomIndex = (int) (Math.random() * powerUpWords.size());
-        return powerUpWords.get(randomIndex);
+        // Only allow power-up words at or below the current level's difficulty
+        ArrayList<Word> eligible = new ArrayList<>();
+        for (Word w : powerUpWords) {
+            if (w.getDifficulty().ordinal() <= difficulty.ordinal()) {
+                eligible.add(w);
+            }
+        }
+        // Fall back to all power-up words if none qualify at this difficulty
+        if (eligible.isEmpty()) {
+            eligible = powerUpWords;
+        }
+        int randomIndex = (int) (Math.random() * eligible.size());
+        return eligible.get(randomIndex);
     }
     
 
