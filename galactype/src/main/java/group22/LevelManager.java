@@ -72,11 +72,13 @@ public class LevelManager {
 
     // Builds the default set of level configurations
     private void initializeLevels(){
-        levels.add(new LevelConfig(1, 5, 1.0f, 2000, DifficultyLevel.EASY, 60000));
-        levels.add(new LevelConfig(2, 7, 1.3f, 1700, DifficultyLevel.EASY, 70000));
-        levels.add(new LevelConfig(3, 9, 1.6f, 1400, DifficultyLevel.MEDIUM, 80000));
-        levels.add(new LevelConfig(4, 11, 1.9f, 1100, DifficultyLevel.MEDIUM, 90000));
-        levels.add(new LevelConfig(5, 14, 2.2f, 900, DifficultyLevel.HARD, 100000));
+        levels.add(new LevelConfig(1, 5, 10f, 2000, DifficultyLevel.EASY, 60000));
+        levels.add(new LevelConfig(2, 7, 15f, 1800, DifficultyLevel.EASY, 70000));
+        levels.add(new LevelConfig(3, 9, 20f, 2000, DifficultyLevel.MEDIUM, 80000));
+        levels.add(new LevelConfig(4, 11, 25f, 2200, DifficultyLevel.MEDIUM, 90000));
+        levels.add(new LevelConfig(5, 14, 40f, 2500, DifficultyLevel.HARD, 100000));
+        levels.add(new LevelConfig(5, 14, 60f, 2500, DifficultyLevel.DOOM, 100000));
+
     }
 
 }
