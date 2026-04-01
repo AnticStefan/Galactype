@@ -21,3 +21,6 @@ target/
 
 # Documentaiton
 docs/
+
+# Local game data
+galactype/data

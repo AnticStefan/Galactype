@@ -233,7 +233,7 @@ public class LoginMenu {
 
         Button loginButton = makePrimaryButton("Login");
         loginButton.setPrefWidth(160);
-        loginButton.setOnAction(e -> attemptLogin(accountType, usernameField, passwordField, messageLabel));
+        loginButton.setOnAction(e -> attemptLogin(accountType, usernameField, passwordField, messageLabel, returnToMain));
 
         Button backButton = makeSecondaryButton("Back to login");
         backButton.setOnAction(e -> swapContent(root, createRoleSelectionContent(root, returnToMain)));
@@ -263,7 +263,7 @@ public class LoginMenu {
         return content;
     }
 
-    private void attemptLogin(AccountType expectedType, TextField usernameField, PasswordField passwordField, Label messageLabel) {
+    private void attemptLogin(AccountType expectedType, TextField usernameField, PasswordField passwordField, Label messageLabel, Runnable returnToMain) {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
@@ -289,10 +289,7 @@ public class LoginMenu {
             return;
         }
 
-        messageLabel.setText(expectedType == AccountType.TEACHER
-                ? "Teacher login successful."
-                : "Student login successful.");
-        messageLabel.setTextFill(Color.web("#d8ffd8"));
+        returnToMain.run();
     }
 
     private void swapContent(StackPane root, VBox content) {
