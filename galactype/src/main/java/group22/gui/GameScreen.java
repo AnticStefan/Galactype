@@ -1,5 +1,7 @@
 package group22.gui;
 
+import java.util.List;
+
 import group22.GameController;
 import group22.Meteor;
 import group22.enums.GameState;
@@ -24,8 +26,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class GameScreen implements GameObserver {
 
@@ -289,11 +289,20 @@ public class GameScreen implements GameObserver {
         Button b = new Button(text);
         b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         b.setTextFill(Color.web("#ffe6ff"));
-        b.setStyle("-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
-                   "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
+                "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(37,0,66,0.7); -fx-border-color: #ffe6ff; " +
+                "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        b.setStyle(normalStyle);
         b.setPrefWidth(180);
         b.setPrefHeight(40);
+        attachHover(b, normalStyle, hoverStyle);
         return b;
+    }
+
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(normalStyle));
     }
 
     // Background

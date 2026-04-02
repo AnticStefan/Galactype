@@ -116,15 +116,28 @@ public class TeacherControlMenu {
         button.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
         button.setPrefWidth(350);
         button.setPrefHeight(38);
-        button.setStyle("-fx-background-color: rgba(255, 245, 255, 0.08);"
+        String normalStyle = "-fx-background-color: rgba(255, 245, 255, 0.08);"
                 + "-fx-border-color: #ffe6ff;"
                 + "-fx-border-width: 2;"
                 + "-fx-background-radius: 10;"
                 + "-fx-border-radius: 10;"
-                + "-fx-cursor: hand;");
+                + "-fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(255, 255, 255, 0.16);"
+                + "-fx-border-color: #ffe6ff;"
+                + "-fx-border-width: 2;"
+                + "-fx-background-radius: 10;"
+                + "-fx-border-radius: 10;"
+                + "-fx-cursor: hand;";
+        button.setStyle(normalStyle);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.22)));
+        attachHover(button, normalStyle, hoverStyle);
         button.setOnAction(e -> messageLabel.setText(message));
         return button;
+    }
+
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(normalStyle));
     }
 
     private Label createScreenTitle() {
@@ -147,10 +160,13 @@ public class TeacherControlMenu {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
-        button.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(60, 0, 110, 0.55); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        button.setStyle(normalStyle);
         button.setPrefWidth(160);
         button.setPrefHeight(38);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        attachHover(button, normalStyle, hoverStyle);
         return button;
     }
 }
