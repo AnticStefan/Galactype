@@ -70,15 +70,25 @@ public class LevelManager {
         return new ArrayList<>(levels);
     }
 
-    // Builds the default set of level configurations
+    // Builds the default set of level configurations.
+    // One level per planet, ordered by distance from the sun: Mercury → Neptune.
     private void initializeLevels(){
-        levels.add(new LevelConfig(1, 5, 10f, 2000, DifficultyLevel.EASY, 60000));
-        levels.add(new LevelConfig(2, 7, 15f, 1800, DifficultyLevel.EASY, 70000));
-        levels.add(new LevelConfig(3, 9, 20f, 2000, DifficultyLevel.MEDIUM, 80000));
-        levels.add(new LevelConfig(4, 11, 25f, 2200, DifficultyLevel.MEDIUM, 90000));
-        levels.add(new LevelConfig(5, 14, 40f, 2500, DifficultyLevel.HARD, 100000));
-        levels.add(new LevelConfig(5, 14, 60f, 2500, DifficultyLevel.DOOM, 100000));
-
+        levels.add(new LevelConfig(1, 5,  10f, 2200, DifficultyLevel.EASY,   60000, 0.05f,
+                "/PlanetImages/mercury.jpg", "Mercury"));
+        levels.add(new LevelConfig(2, 7,  14f, 2000, DifficultyLevel.EASY,   65000, 0.05f,
+                "/PlanetImages/venus.jpg", "Venus"));
+        levels.add(new LevelConfig(3, 9,  18f, 1800, DifficultyLevel.MEDIUM, 70000, 0.05f,
+                "/PlanetImages/earth.jpg", "Earth"));
+        levels.add(new LevelConfig(4, 10, 22f, 1800, DifficultyLevel.MEDIUM, 75000, 0.05f,
+                "/PlanetImages/mars.jpg", "Mars"));
+        levels.add(new LevelConfig(5, 12, 28f, 1600, DifficultyLevel.HARD,   85000, 0.05f,
+                "/PlanetImages/jupiter.jpg", "Jupiter"));
+        levels.add(new LevelConfig(6, 13, 36f, 1600, DifficultyLevel.HARD,   90000, 0.05f,
+                "/PlanetImages/saturn.jpg", "Saturn"));
+        levels.add(new LevelConfig(7, 14, 50f, 1400, DifficultyLevel.DOOM,   95000, 0.05f,
+                "/PlanetImages/urnaus.jpg", "Uranus"));
+        levels.add(new LevelConfig(8, 14, 65f, 1400, DifficultyLevel.DOOM,   100000, 0.05f,
+                "/PlanetImages/neptune.jpg", "Neptune"));
     }
 
 }

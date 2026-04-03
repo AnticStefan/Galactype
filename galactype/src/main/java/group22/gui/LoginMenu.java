@@ -44,7 +44,7 @@ public class LoginMenu {
         root.setPadding(new Insets(16));
 
         Label logoLabel = createLogoLabel();
-        Button exitButton = MainMenu.createTopRightButton("Exit");
+        Button exitButton = MainMenu.createTopRightButton("Quit");
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();
@@ -61,7 +61,9 @@ public class LoginMenu {
                 exitButton
         );
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
+        return scene;
     }
 
     private VBox createRoleSelectionContent(StackPane root, Runnable returnToMain) {
@@ -339,8 +341,7 @@ public class LoginMenu {
     }
 
     private void attachHover(Button button, String normalStyle, String hoverStyle) {
-        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
-        button.setOnMouseExited(e -> button.setStyle(normalStyle));
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
     }
 
     private Button makePrimaryButton(String text) {

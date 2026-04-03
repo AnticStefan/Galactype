@@ -3,6 +3,7 @@ package group22.gui;
 import java.util.List;
 
 import group22.GameController;
+import group22.LevelConfig;
 import group22.Meteor;
 import group22.enums.GameState;
 import group22.enums.PowerUpType;
@@ -16,14 +17,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -56,7 +63,9 @@ public class GameScreen implements GameObserver {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Pane bg = createSpaceBg();
+        LevelConfig levelConfig = gameController.getLevelManager().getLevelByNumber(levelNumber);
+        String backgroundAsset = levelConfig != null ? levelConfig.getBackgroundAsset() : null;
+        Pane bg = createSpaceBg(backgroundAsset);
 
         StackPane overlay = new StackPane();
         overlay.setVisible(false);
@@ -198,6 +207,8 @@ public class GameScreen implements GameObserver {
 
         // Meteor body
         Color bodyColor, strokeColor;
+
+        //checks for powerup type and changes meteor colour accordingly, otherwise defaults to purple for normal meteors
         if (isPowerUp) {
             PowerUpType type = meteor.getWord().getPowerUpType();
             switch (type) {
@@ -334,11 +345,35 @@ public class GameScreen implements GameObserver {
 
     // Background
 
-    private Pane createSpaceBg() {
+    private Pane createSpaceBg(String backgroundAsset) {
         Pane bg = new Pane();
         bg.setPrefSize(WIDTH, HEIGHT);
-        bg.setBackground(new Background(new BackgroundFill(
-                Color.web("#0d0025"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        BackgroundFill darkFill = new BackgroundFill(Color.web("#0d0025"), CornerRadii.EMPTY, Insets.EMPTY);
+
+        if (backgroundAsset != null) {
+            var stream = GameScreen.class.getResourceAsStream(backgroundAsset);
+            if (stream != null) {
+                // Cover scaling: fills the pane while preserving aspect ratio (no stretching)
+                BackgroundImage bgImg = new BackgroundImage(
+                        new Image(stream),
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundPosition.CENTER,
+                        new BackgroundSize(1.0, 1.0, true, true, false, true)
+                );
+                bg.setBackground(new Background(
+                        java.util.List.of(darkFill),
+                        java.util.List.of(bgImg)
+                ));
+                // Semi-transparent overlay so meteor text stays readable
+                bg.getChildren().add(new Rectangle(WIDTH, HEIGHT, Color.web("#000000", 0.48)));
+            } else {
+                bg.setBackground(new Background(darkFill));
+            }
+        } else {
+            bg.setBackground(new Background(darkFill));
+        }
 
         for (int i = 0; i < 90; i++) {
             double size = Math.random() < 0.25 ? 2.0 : 1.2;

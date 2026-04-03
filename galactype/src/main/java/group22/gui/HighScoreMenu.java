@@ -46,7 +46,7 @@ public class HighScoreMenu {
         root.setPadding(new Insets(16));
 
         Label logoLabel = createLogoLabel();
-        Button exitButton = MainMenu.createTopRightButton("Exit");
+        Button exitButton = MainMenu.createTopRightButton("Quit");
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();
@@ -63,7 +63,9 @@ public class HighScoreMenu {
                 exitButton
         );
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
+        return scene;
     }
 
     private VBox createContent(Runnable returnToMain) {
@@ -204,7 +206,6 @@ public class HighScoreMenu {
     }
 
     private void attachHover(Button button, String normalStyle, String hoverStyle) {
-        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
-        button.setOnMouseExited(e -> button.setStyle(normalStyle));
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
     }
 }
