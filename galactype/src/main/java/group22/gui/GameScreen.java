@@ -5,6 +5,7 @@ import java.util.List;
 import group22.GameController;
 import group22.LevelConfig;
 import group22.Meteor;
+import group22.ScoreManager;
 import group22.enums.GameState;
 import group22.enums.PowerUpType;
 import group22.interfaces.GameObserver;
@@ -183,6 +184,23 @@ public class GameScreen implements GameObserver {
         gc.setFill(Color.web("#c8a0ff"));
         gc.fillText("Level " + levelNumber, 18, 43);
 
+        // Combo
+        if (session.getScoreManager() != null) {
+            int comboStreak = session.getScoreManager().getComboStreak();
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            gc.setFill(Color.web("#ffe6ff"));
+            gc.fillText("Combo: " + comboStreak + " chars", 125, 24);
+        }
+
+        // streak/multiplier info (small status, only show multiplier)
+        ScoreManager scoreManager = session.getScoreManager();
+        if (scoreManager != null) {
+            float multiplier = scoreManager.getComboMultiplier();
+
+            gc.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            gc.setFill(Color.web("#c8a0ff"));
+            gc.fillText(String.format("Mult: %.2fx", multiplier), 125, 43);
+        }
         // WPM (centre-left)
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 17));
         gc.setFill(Color.web("#ffe6ff"));
@@ -203,6 +221,7 @@ public class GameScreen implements GameObserver {
         gc.setFont(Font.font("Arial", FontWeight.BOLD, 39));
         gc.setFill(Color.web("#c8a0ff"));
         gc.fillText(String.valueOf(health), WIDTH - 210, 40);
+
     }
 
     private void renderMeteor(GraphicsContext gc, Meteor meteor) {

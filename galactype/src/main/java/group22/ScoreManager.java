@@ -6,6 +6,7 @@ public class ScoreManager {
     private int currentScore;
     private int highScore;
     private int comboStreak;
+    private int wordStreak;
     private float comboMultiplier;
     private int comboThreshold;
     private boolean newHighScore;
@@ -16,6 +17,7 @@ public class ScoreManager {
         this.highScore = Math.max(0, highScore);
         this.currentScore = 0;
         this.comboStreak = 0;
+        this.wordStreak = 0;
         this.comboMultiplier = 1.0f;
         this.comboThreshold = DEFAULT_COMBO_THRESHOLD;
         this.newHighScore = false;
@@ -27,7 +29,11 @@ public class ScoreManager {
             return;
         }
 
-        currentScore += calculateWordPoints(word, wpm);
+        int points = calculateWordPoints(word, wpm);
+        currentScore += points;
+        wordStreak++;
+        updateComboMultiplier();
+
         if (currentScore > highScore) {
             highScore = currentScore;
             newHighScore = true;
@@ -43,6 +49,7 @@ public class ScoreManager {
     // Resets combo progress after an input error.
     public void onError() {
         comboStreak = 0;
+        wordStreak = 0;
         comboMultiplier = 1.0f;
     }
 
@@ -61,6 +68,11 @@ public class ScoreManager {
         return comboStreak;
     }
 
+    // Returns the current streak of correctly completed words.
+    public int getWordStreak() {
+        return wordStreak;
+    }
+
     // Returns the active combo multiplier.
     public float getComboMultiplier() {
         return comboMultiplier;
@@ -75,17 +87,26 @@ public class ScoreManager {
     public void reset() {
         currentScore = 0;
         comboStreak = 0;
+        wordStreak = 0;
         comboMultiplier = 1.0f;
         newHighScore = false;
     }
 
     // Calculates the points awarded for a completed word.
     private int calculateWordPoints(Word word, float wpm) {
-        return 1;
+        int basePoints = word.getText().length() * 7; // slower score growth
+        // Add modest bonus for typing speed
+        float speedBonus = 1.0f + Math.min(wpm, 120f) / 120f * 0.35f;
+        int points = Math.round(basePoints * comboMultiplier * speedBonus);
+        return Math.max(1, points);
     }
 
     // Recomputes the multiplier based on the current combo streak.
     private void updateComboMultiplier() {
-        comboMultiplier = 1.0f + (comboStreak / comboThreshold) * 0.5f;
+        float charComponent = (comboStreak / (float) comboThreshold) * 0.22f;
+        float wordComponent = (wordStreak / 3f) * 0.2f;
+        comboMultiplier = 1.0f + charComponent + wordComponent;
+        // cap combo multiplier to prevent runaway scoring
+        comboMultiplier = Math.min(comboMultiplier, 3.5f);
     }
 }
