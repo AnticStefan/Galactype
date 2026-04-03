@@ -106,6 +106,10 @@ public class GameScreen implements GameObserver {
             gameController.getCurrentSession().addObserver(this);
         }
 
+        // Enter fires whichever overlay button is focused (does not interfere with typing,
+        // because during gameplay no button holds focus — the scene root does)
+        MainMenu.applyKeyboardNav(scene, null);
+
         lastNanoTime = System.nanoTime();
         gameLoop = new AnimationTimer() {
             @Override
@@ -245,6 +249,23 @@ public class GameScreen implements GameObserver {
         hint.setFont(Font.font("Arial", 15));
         hint.setTextFill(Color.web("#c8a0ff"));
 
+        Button restartBtn = makeOverlayButton("Restart Level");
+        restartBtn.setOnAction(e -> {
+            gameLoop.stop();
+            gameController.endGame();
+            latestState = GameState.RUNNING;
+            finalScore = 0;
+            finalWpm = 0f;
+            gameController.startGame(levelNumber);
+            if (gameController.getCurrentSession() != null) {
+                gameController.getCurrentSession().addObserver(GameScreen.this);
+            }
+            overlay.getChildren().clear();
+            overlay.setVisible(false);
+            lastNanoTime = System.nanoTime();
+            gameLoop.start();
+        });
+
         Button quitBtn = makeOverlayButton("Quit to Menu");
         quitBtn.setOnAction(e -> {
             gameLoop.stop();
@@ -252,9 +273,10 @@ public class GameScreen implements GameObserver {
             returnToMenu.run();
         });
 
-        VBox box = overlayBox(title, hint, quitBtn);
+        VBox box = overlayBox(title, hint, restartBtn, quitBtn);
         overlay.getChildren().setAll(box);
         overlay.setVisible(true);
+        javafx.application.Platform.runLater(restartBtn::requestFocus);
     }
 
     private void showEndOverlay(StackPane overlay, boolean won, Runnable returnToMenu) {
@@ -275,12 +297,28 @@ public class GameScreen implements GameObserver {
         msg.setFont(Font.font("Arial", 14));
         msg.setTextFill(Color.web("#d0b0ff"));
 
+        Button playAgainBtn = makeOverlayButton("Play Again");
+        playAgainBtn.setOnAction(e -> {
+            latestState = GameState.RUNNING;
+            finalScore = 0;
+            finalWpm = 0f;
+            gameController.startGame(levelNumber);
+            if (gameController.getCurrentSession() != null) {
+                gameController.getCurrentSession().addObserver(GameScreen.this);
+            }
+            overlay.getChildren().clear();
+            overlay.setVisible(false);
+            lastNanoTime = System.nanoTime();
+            gameLoop.start();
+        });
+
         Button menuBtn = makeOverlayButton("Return to Menu");
         menuBtn.setOnAction(e -> returnToMenu.run());
 
-        VBox box = overlayBox(title, scoreLbl, wpmLbl, msg, menuBtn);
+        VBox box = overlayBox(title, scoreLbl, wpmLbl, msg, playAgainBtn, menuBtn);
         overlay.getChildren().setAll(box);
         overlay.setVisible(true);
+        javafx.application.Platform.runLater(playAgainBtn::requestFocus);
     }
 
     private VBox overlayBox(javafx.scene.Node... nodes) {

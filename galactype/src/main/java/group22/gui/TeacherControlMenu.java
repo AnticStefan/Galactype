@@ -66,7 +66,9 @@ public class TeacherControlMenu {
             showAuthPanel();
         }
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.applyKeyboardNav(scene, null);
+        return scene;
     }
 
     /** Returns true when the currently logged-in account is a teacher. */
@@ -74,7 +76,7 @@ public class TeacherControlMenu {
         return gameController.getAccountManager().getCurrentAccount() instanceof TeacherAccount;
     }
 
-    // ── Auth panel ────────────────────────────────────────────────────────────
+    // Auth panel 
 
     /** Shows the teacher login form when no teacher is authenticated. */
     private void showAuthPanel() {

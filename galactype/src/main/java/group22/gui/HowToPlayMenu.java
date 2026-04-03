@@ -39,13 +39,11 @@ public class HowToPlayMenu {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
 
-        root.getChildren().addAll(
-                createContent(returnToMain),
-                logoLabel,
-                exitButton
-        );
+        root.getChildren().addAll(createContent(returnToMain), logoLabel, exitButton);
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.applyKeyboardNav(scene, null);
+        return scene;
     }
 
     private VBox createContent(Runnable returnToMain) {

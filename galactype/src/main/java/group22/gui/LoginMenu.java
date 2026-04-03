@@ -51,13 +51,25 @@ public class LoginMenu {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
 
-        root.getChildren().addAll(
-                createRoleSelectionContent(root, returnToMain),
-                logoLabel,
-                exitButton
-        );
+        Button teacherBtn = makePrimaryButton("Login as Teacher");
+        Button studentBtn = makePrimaryButton("Login as Student");
+        Button createBtn  = makeSecondaryButton("Create Account");
+        Button backBtn    = makeSecondaryButton("Back to Main Menu");
+        teacherBtn.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.TEACHER, root, returnToMain)));
+        studentBtn.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.PLAYER,  root, returnToMain)));
+        createBtn.setPrefWidth(220);
+        createBtn.setOnAction(e -> swapContent(root, createRegistrationContent(root, returnToMain)));
+        backBtn.setOnAction(e -> returnToMain.run());
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        VBox roleContent = new VBox(18, createScreenTitle("Login"), teacherBtn, studentBtn, createBtn, backBtn);
+        roleContent.setAlignment(Pos.CENTER);
+        roleContent.setPadding(new Insets(28));
+
+        root.getChildren().addAll(roleContent, logoLabel, exitButton);
+
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.applyKeyboardNav(scene, teacherBtn);
+        return scene;
     }
 
     private VBox createRoleSelectionContent(StackPane root, Runnable returnToMain) {

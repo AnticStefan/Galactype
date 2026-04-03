@@ -81,13 +81,13 @@ public class LevelManager {
                 "/PlanetImages/earth.jpg", "Earth"));
         levels.add(new LevelConfig(4, 10, 22f, 1800, DifficultyLevel.MEDIUM, 75000, 0.05f,
                 "/PlanetImages/mars.jpg", "Mars"));
-        levels.add(new LevelConfig(5, 12, 28f, 1600, DifficultyLevel.HARD,   85000, 0.05f,
+        levels.add(new LevelConfig(5, 12, 26f, 1600, DifficultyLevel.HARD,   85000, 0.05f,
                 "/PlanetImages/jupiter.jpg", "Jupiter"));
-        levels.add(new LevelConfig(6, 13, 36f, 1600, DifficultyLevel.HARD,   90000, 0.05f,
+        levels.add(new LevelConfig(6, 13, 30f, 1600, DifficultyLevel.HARD,   90000, 0.05f,
                 "/PlanetImages/saturn.jpg", "Saturn"));
-        levels.add(new LevelConfig(7, 14, 50f, 1400, DifficultyLevel.DOOM,   95000, 0.05f,
+        levels.add(new LevelConfig(7, 14, 36f, 1400, DifficultyLevel.DOOM,   95000, 0.05f,
                 "/PlanetImages/urnaus.jpg", "Uranus"));
-        levels.add(new LevelConfig(8, 14, 65f, 1400, DifficultyLevel.DOOM,   100000, 0.05f,
+        levels.add(new LevelConfig(8, 14, 42f, 1400, DifficultyLevel.DOOM,   100000, 0.05f,
                 "/PlanetImages/neptune.jpg", "Neptune"));
     }
 

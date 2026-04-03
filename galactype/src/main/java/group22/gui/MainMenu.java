@@ -16,10 +16,13 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -89,7 +92,9 @@ public class MainMenu extends Application {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
         root.setPadding(new Insets(16));
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        applyKeyboardNav(scene, playButton);
+        return scene;
     }
 
     private void openPlayMenu(Stage stage) {
@@ -144,7 +149,9 @@ public class MainMenu extends Application {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
         root.setPadding(new Insets(16));
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        applyKeyboardNav(scene, backButton);
+        return scene;
     }
 
 
@@ -254,6 +261,26 @@ public class MainMenu extends Application {
         button.setPrefHeight(52);
         button.setMinHeight(52);
         button.setMaxHeight(52);
+    }
+
+    /**
+     * Makes a scene fully keyboard-navigable:
+     * - Shows a visible focus ring on the focused element.
+     * - Pressing Enter fires whichever Button currently holds focus.
+     * - Requests focus on {@code initialFocus} on the next frame (pass null to skip).
+     */
+    static void applyKeyboardNav(Scene scene, Node initialFocus) {
+        scene.getRoot().setStyle(
+                "-fx-focus-color: #ffe6ff; -fx-faint-focus-color: rgba(255,230,255,0.18);");
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER && scene.getFocusOwner() instanceof Button btn) {
+                btn.fire();
+                e.consume();
+            }
+        });
+        if (initialFocus != null) {
+            Platform.runLater(initialFocus::requestFocus);
+        }
     }
 
     static Button createTopRightButton(String text) {

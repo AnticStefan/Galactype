@@ -47,7 +47,9 @@ public class PlayMenu {
 
         root.getChildren().addAll(createContent(stage, returnToMain), logoLabel, exitButton);
 
-        return new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        MainMenu.applyKeyboardNav(scene, null);
+        return scene;
     }
 
     private VBox createContent(Stage stage, Runnable returnToMain) {
