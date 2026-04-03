@@ -55,6 +55,8 @@ public class LoginMenu {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
 
+
+
         root.getChildren().addAll(
                 createRoleSelectionContent(root, returnToMain),
                 logoLabel,

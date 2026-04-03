@@ -76,6 +76,8 @@ public class TeacherControlMenu {
         return gameController.getAccountManager().getCurrentAccount() instanceof TeacherAccount;
     }
 
+    // Auth panel 
+
     /** Shows the teacher login form when no teacher is authenticated. */
     private void showAuthPanel() {
         Label title = new Label("Teacher Access");

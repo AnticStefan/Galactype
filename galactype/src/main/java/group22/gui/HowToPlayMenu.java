@@ -39,11 +39,7 @@ public class HowToPlayMenu {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
 
-        root.getChildren().addAll(
-                createContent(returnToMain),
-                logoLabel,
-                exitButton
-        );
+        root.getChildren().addAll(createContent(returnToMain), logoLabel, exitButton);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         MainMenu.addMenuBackSpace(scene, returnToMain);
