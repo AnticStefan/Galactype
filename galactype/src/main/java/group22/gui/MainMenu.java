@@ -71,7 +71,7 @@ public class MainMenu extends Application {
         highScoresButton.setOnAction(e -> stage.setScene(new HighScoreMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         loginButton.setOnAction(e -> stage.setScene(new LoginMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         howToPlayButton.setOnAction(e -> stage.setScene(new HowToPlayMenu().createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
-        teacherControlButton.setOnAction(e -> stage.setScene(new TeacherControlMenu().createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
+        teacherControlButton.setOnAction(e -> stage.setScene(new TeacherControlMenu(gameController).createScene(stage, () -> stage.setScene(createMainMenuScene(stage)))));
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();

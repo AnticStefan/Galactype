@@ -12,12 +12,17 @@ public class LevelConfig {
     private final long durationMs;
     private final float powerUpSpawnChance;
     private final String backgroundAsset;
+    private final String planetName;
 
     public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed, long spawnIntervalMs, DifficultyLevel difficulty, long durationMs) {
-        this(levelNumber, maxMeteors, meteorSpeed, spawnIntervalMs, difficulty, durationMs, 0.05f);
+        this(levelNumber, maxMeteors, meteorSpeed, spawnIntervalMs, difficulty, durationMs, 0.05f, null, null);
     }
 
     public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed, long spawnIntervalMs, DifficultyLevel difficulty, long durationMs, float powerUpSpawnChance) {
+        this(levelNumber, maxMeteors, meteorSpeed, spawnIntervalMs, difficulty, durationMs, powerUpSpawnChance, null, null);
+    }
+
+    public LevelConfig(int levelNumber, int maxMeteors, float meteorSpeed, long spawnIntervalMs, DifficultyLevel difficulty, long durationMs, float powerUpSpawnChance, String backgroundAsset, String planetName) {
         this.levelNumber = levelNumber;
         this.maxMeteors = maxMeteors;
         this.meteorSpeed = meteorSpeed;
@@ -25,7 +30,8 @@ public class LevelConfig {
         this.wordDifficulty = difficulty;
         this.durationMs = durationMs;
         this.powerUpSpawnChance = powerUpSpawnChance;
-        this.backgroundAsset = null;
+        this.backgroundAsset = backgroundAsset;
+        this.planetName = planetName;
     }
 
     public int getLevelNumber() {
@@ -58,5 +64,9 @@ public class LevelConfig {
     
     public String getBackgroundAsset() {
         return backgroundAsset;
+    }
+
+    public String getPlanetName() {
+        return planetName;
     }
 }

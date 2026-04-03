@@ -59,20 +59,27 @@ public class PlayMenu {
         int unlockedUpTo = getUnlockedLevel();
         List<LevelConfig> levels = gameController.getLevelManager().getAllLevels();
 
-        HBox levelRow = new HBox(16);
-        levelRow.setAlignment(Pos.CENTER);
+        // Split into two rows of 4 so all 8 planets fit without overflowing
+        HBox topRow    = new HBox(14);
+        HBox bottomRow = new HBox(14);
+        topRow.setAlignment(Pos.CENTER);
+        bottomRow.setAlignment(Pos.CENTER);
 
-        for (LevelConfig config : levels) {
+        for (int i = 0; i < levels.size(); i++) {
+            LevelConfig config = levels.get(i);
             int lvl = config.getLevelNumber();
             boolean locked = lvl > unlockedUpTo;
             Button btn = makeLevelButton(config, locked);
             if (!locked) {
                 btn.setOnAction(e -> launchGame(stage, lvl, returnToMain));
             }
-            levelRow.getChildren().add(btn);
+            (i < 4 ? topRow : bottomRow).getChildren().add(btn);
         }
 
-        VBox content = new VBox(28, title, levelRow);
+        VBox grid = new VBox(12, topRow, bottomRow);
+        grid.setAlignment(Pos.CENTER);
+
+        VBox content = new VBox(22, title, grid);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(28));
         return content;
@@ -80,10 +87,11 @@ public class PlayMenu {
 
     private Button makeLevelButton(LevelConfig config, boolean locked) {
         int lvl = config.getLevelNumber();
+        String planetName = config.getPlanetName() != null ? config.getPlanetName() : "Level " + lvl;
         String diff = config.getWordDifficulty().name().charAt(0)
                 + config.getWordDifficulty().name().substring(1).toLowerCase();
 
-        String label = locked ? "Level " + lvl + "\n\uD83D\uDD12" : "Level " + lvl + "\n" + diff;
+        String label = locked ? planetName + "\n\uD83D\uDD12" : planetName + "\n" + diff;
 
         Button btn = new Button(label);
         btn.setFont(Font.font("Arial", FontWeight.BOLD, 13));

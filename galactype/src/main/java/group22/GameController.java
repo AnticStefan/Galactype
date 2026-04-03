@@ -110,9 +110,14 @@ public class GameController {
         accountManager.save();
     }
 
+    // Persists the current high score table to disk
+    public void saveHighScores() {
+        dataManager.saveHighScores(highScoreTable);
+    }
+
     // Getters for the UI layer
     public AccountManager getAccountManager() {
-        return accountManager; 
+        return accountManager;
     }
     
     public LevelManager getLevelManager() {
