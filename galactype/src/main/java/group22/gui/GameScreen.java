@@ -5,6 +5,7 @@ import java.util.List;
 import group22.GameController;
 import group22.Meteor;
 import group22.enums.GameState;
+import group22.enums.PowerUpType;
 import group22.interfaces.GameObserver;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
@@ -32,8 +33,8 @@ public class GameScreen implements GameObserver {
     private static final int WIDTH = 760;
     private static final int HEIGHT = 580;
     private static final int HUD_HEIGHT = 55;
-    // Char width estimate for Courier New Bold 14
-    private static final double CHAR_WIDTH = 8.4;
+    // Char width estimate for Courier New Bold 16
+    private static final double CHAR_WIDTH = 9.6;
 
     private final GameController gameController;
     private final int levelNumber;
@@ -196,8 +197,34 @@ public class GameScreen implements GameObserver {
         boolean isPowerUp = meteor.getWord().isPowerUP();
 
         // Meteor body
-        Color bodyColor = isPowerUp ? Color.web("#ffcc00", 0.9) : Color.web("#e26bff", 0.9);
-        Color strokeColor = isPowerUp ? Color.web("#ffaa00") : Color.web("#c32fff");
+        Color bodyColor, strokeColor;
+        if (isPowerUp) {
+            PowerUpType type = meteor.getWord().getPowerUpType();
+            switch (type) {
+                case SLOW_METEORS:
+                    bodyColor = Color.web("#87ceeb", 0.9);
+                    strokeColor = Color.web("#4682b4");
+                    break;
+                case FREEZE_METEORS:
+                    bodyColor = Color.web("#00ced1", 0.9);
+                    strokeColor = Color.web("#008b8b");
+                    break;
+                case SHIELD:
+                    bodyColor = Color.web("#32cd32", 0.9);
+                    strokeColor = Color.web("#228b22");
+                    break;
+                case EXTRA_LIFE:
+                    bodyColor = Color.web("#ff6347", 0.9);
+                    strokeColor = Color.web("#dc143c");
+                    break;
+                default:
+                    bodyColor = Color.web("#ffcc00", 0.9);
+                    strokeColor = Color.web("#ffaa00");
+            }
+        } else {
+            bodyColor = Color.web("#e26bff", 0.9);
+            strokeColor = Color.web("#c32fff");
+        }
 
         gc.setFill(bodyColor);
         gc.fillOval(x - 22, y - 22, 44, 44);
@@ -213,7 +240,7 @@ public class GameScreen implements GameObserver {
         double textX = x - wordWidth / 2.0;
         double textY = y + 38;
 
-        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 16));
 
         // Typed portion – greyed out
         gc.setFill(Color.web("#888888"));
@@ -250,7 +277,7 @@ public class GameScreen implements GameObserver {
 
     private void showEndOverlay(StackPane overlay, boolean won, Runnable returnToMenu) {
         Label title = new Label(won ? "Level Complete!" : "Game Over");
-        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 44));
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 35));
         title.setTextFill(won ? Color.web("#88ff99") : Color.web("#ff6677"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d")));
 
