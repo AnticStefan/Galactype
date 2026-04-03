@@ -172,7 +172,7 @@ public class GameScreen implements GameObserver {
         long duration = gameController.getLevelManager().getLevelByNumber(levelNumber).getDurationMs();
         long remaining = Math.max(0, duration - elapsed) / 1000;
 
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 17));
 
         // Score (left)
         gc.setFill(Color.web("#ffe6ff"));
@@ -181,10 +181,10 @@ public class GameScreen implements GameObserver {
         // Level label (left, below score)
         gc.setFont(Font.font("Arial", 12));
         gc.setFill(Color.web("#c8a0ff"));
-        gc.fillText("Level " + levelNumber, 18, 42);
+        gc.fillText("Level " + levelNumber, 18, 43);
 
         // WPM (centre-left)
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 17));
         gc.setFill(Color.web("#ffe6ff"));
         gc.fillText(String.format("WPM: %.1f", wpm), WIDTH / 2.0 - 100, 30);
 
@@ -193,14 +193,14 @@ public class GameScreen implements GameObserver {
 
          // Lives as hearts (right)
         gc.setFill(Color.web("#ff5dd4"));
-        gc.setFont(Font.font("Arial", 60));
+        gc.setFont(Font.font("Arial", 58));
         StringBuilder hearts = new StringBuilder();
         for (int i = 0; i < health; i++) hearts.append("♥ ");
         String heartsText = hearts.toString().trim();
         gc.fillText(heartsText, WIDTH - 170, 43);
 
          // counter for the lives (number before hearts)
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 39));
         gc.setFill(Color.web("#c8a0ff"));
         gc.fillText(String.valueOf(health), WIDTH - 210, 40);
     }
@@ -262,10 +262,10 @@ public class GameScreen implements GameObserver {
         double textX = x - wordWidth / 2.0;
         double textY = y + 38;
 
-        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 16));
+        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 17));
 
-        // Typed portion – greyed out
-        gc.setFill(Color.web("#888888"));
+        // Typed portion – active (pink), not grey
+        gc.setFill(Color.web("#ff85d2"));
         gc.fillText(typed, textX, textY);
 
         // Remaining portion – bright
