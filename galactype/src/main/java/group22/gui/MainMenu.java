@@ -292,13 +292,13 @@ public class MainMenu extends Application {
         }
     }
 
-    private void attachPrimaryHover(Button button) {
-        applyHoverFocusBehavior(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
-    }
+    // private void attachPrimaryHover(Button button) {
+    //     applyHoverFocusBehavior(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
+    // }
 
-    private static void attachHover(Button button, String normalStyle, String hoverStyle) {
-        applyHoverFocusBehavior(button, normalStyle, hoverStyle);
-    }
+    // private static void attachHover(Button button, String normalStyle, String hoverStyle) {
+    //     applyHoverFocusBehavior(button, normalStyle, hoverStyle);
+    // }
 
     public static void applyHoverFocusBehavior(Button button, String normalStyle, String hoverStyle) {
         button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
