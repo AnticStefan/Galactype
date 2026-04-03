@@ -317,7 +317,7 @@ public class GameScreen implements GameObserver {
 
     private void showEndOverlay(StackPane overlay, boolean won, Runnable returnToMenu) {
         Label title = new Label(won ? "Level Complete!" : "Game Over");
-        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 35));
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 30));
         title.setTextFill(won ? Color.web("#88ff99") : Color.web("#ff6677"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d")));
 
