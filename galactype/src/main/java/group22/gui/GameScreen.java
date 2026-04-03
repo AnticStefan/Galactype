@@ -191,11 +191,18 @@ public class GameScreen implements GameObserver {
         // Time (centre-right)
         gc.fillText("Time: " + remaining + "s", WIDTH / 2.0 + 10, 30);
 
-        // Lives as hearts (right)
+         // Lives as hearts (right)
         gc.setFill(Color.web("#ff5dd4"));
+        gc.setFont(Font.font("Arial", 60));
         StringBuilder hearts = new StringBuilder();
         for (int i = 0; i < health; i++) hearts.append("♥ ");
-        gc.fillText(hearts.toString().trim(), WIDTH - 140, 30);
+        String heartsText = hearts.toString().trim();
+        gc.fillText(heartsText, WIDTH - 170, 43);
+
+         // counter for the lives (number before hearts)
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        gc.setFill(Color.web("#c8a0ff"));
+        gc.fillText(String.valueOf(health), WIDTH - 210, 40);
     }
 
     private void renderMeteor(GraphicsContext gc, Meteor meteor) {
