@@ -1,5 +1,7 @@
 package group22.gui;
 
+import java.util.List;
+
 import group22.AccountManager;
 import group22.GameController;
 import group22.PlayerAccount;
@@ -26,8 +28,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 /**
  * Teacher/parent control panel. Requires authentication as a TEACHER account
@@ -67,7 +67,7 @@ public class TeacherControlMenu {
         }
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        MainMenu.applyKeyboardNav(scene, null);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
         return scene;
     }
 
@@ -450,8 +450,12 @@ public class TeacherControlMenu {
         b.setTextFill(Color.web("#ffe6ff"));
         b.setPrefWidth(150);
         b.setPrefHeight(36);
-        b.setStyle("-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
-                "-fx-border-width: 2; -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
+                "-fx-border-width: 2; -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(60,0,110,0.9); -fx-border-color: #ffffff; " +
+                "-fx-border-width: 2; -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;";
+        b.setStyle(normalStyle);
+        MainMenu.applyHoverFocusBehavior(b, normalStyle, hoverStyle);
         return b;
     }
 
@@ -461,10 +465,15 @@ public class TeacherControlMenu {
         b.setTextFill(Color.WHITE);
         b.setPrefWidth(220);
         b.setPrefHeight(40);
-        b.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); " +
+        String normalStyle = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); " +
                 "-fx-border-color: #ffe6ff; -fx-border-width: 2; " +
-                "-fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+                "-fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #d453ff, #ff76e0); " +
+                "-fx-border-color: #ffff88; -fx-border-width: 3; " +
+                "-fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        b.setStyle(normalStyle);
         b.setEffect(new DropShadow(8, Color.web("#6100aa", 0.45)));
+        MainMenu.applyHoverFocusBehavior(b, normalStyle, hoverStyle);
         return b;
     }
 
@@ -473,20 +482,27 @@ public class TeacherControlMenu {
         b.setFont(Font.font("Arial", FontWeight.BOLD, 13));
         b.setTextFill(Color.web("#ffe6ff"));
         b.setPrefHeight(32);
-        b.setStyle("-fx-background-color: rgba(37,0,66,0.6); -fx-border-color: #c32fff; " +
-                "-fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37,0,66,0.6); -fx-border-color: #c32fff; " +
+                "-fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(70,0,120,0.85); -fx-border-color: #ff8cff; " +
+                "-fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;";
+        b.setStyle(normalStyle);
+        MainMenu.applyHoverFocusBehavior(b, normalStyle, hoverStyle);
         return b;
     }
 
     private Button makeSecondaryButton(String text) {
-        Button b = new Button(text);
-        b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        b.setTextFill(Color.web("#ffe6ff"));
-        b.setPrefWidth(220);
-        b.setPrefHeight(38);
-        b.setStyle("-fx-background-color: rgba(37,0,66,0.35); -fx-border-color: #ffe6ff; " +
-                "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
-        return b;
+        Button button = new Button(text);
+        button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        button.setTextFill(Color.web("#ffe6ff"));
+        String normalStyle = "-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(60, 0, 110, 0.55); -fx-border-color: #ffffff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        button.setStyle(normalStyle);
+        button.setPrefWidth(160);
+        button.setPrefHeight(38);
+        button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
+        return button;
     }
 
     /** Formats milliseconds into a human-readable duration string. */

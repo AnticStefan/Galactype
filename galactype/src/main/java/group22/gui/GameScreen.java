@@ -1,9 +1,12 @@
 package group22.gui;
 
+import java.util.List;
+
 import group22.GameController;
 import group22.LevelConfig;
 import group22.Meteor;
 import group22.enums.GameState;
+import group22.enums.PowerUpType;
 import group22.interfaces.GameObserver;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Insets;
@@ -32,15 +35,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.util.List;
-
 public class GameScreen implements GameObserver {
 
     private static final int WIDTH = 760;
     private static final int HEIGHT = 580;
     private static final int HUD_HEIGHT = 55;
-    // Char width estimate for Courier New Bold 14
-    private static final double CHAR_WIDTH = 8.4;
+    // Char width estimate for Courier New Bold 16
+    private static final double CHAR_WIDTH = 9.6;
 
     private final GameController gameController;
     private final int levelNumber;
@@ -171,7 +172,7 @@ public class GameScreen implements GameObserver {
         long duration = gameController.getLevelManager().getLevelByNumber(levelNumber).getDurationMs();
         long remaining = Math.max(0, duration - elapsed) / 1000;
 
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 17));
 
         // Score (left)
         gc.setFill(Color.web("#ffe6ff"));
@@ -180,21 +181,28 @@ public class GameScreen implements GameObserver {
         // Level label (left, below score)
         gc.setFont(Font.font("Arial", 12));
         gc.setFill(Color.web("#c8a0ff"));
-        gc.fillText("Level " + levelNumber, 18, 42);
+        gc.fillText("Level " + levelNumber, 18, 43);
 
         // WPM (centre-left)
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 17));
         gc.setFill(Color.web("#ffe6ff"));
         gc.fillText(String.format("WPM: %.1f", wpm), WIDTH / 2.0 - 100, 30);
 
         // Time (centre-right)
         gc.fillText("Time: " + remaining + "s", WIDTH / 2.0 + 10, 30);
 
-        // Lives as hearts (right)
+         // Lives as hearts (right)
         gc.setFill(Color.web("#ff5dd4"));
+        gc.setFont(Font.font("Arial", 58));
         StringBuilder hearts = new StringBuilder();
         for (int i = 0; i < health; i++) hearts.append("♥ ");
-        gc.fillText(hearts.toString().trim(), WIDTH - 140, 30);
+        String heartsText = hearts.toString().trim();
+        gc.fillText(heartsText, WIDTH - 170, 43);
+
+         // counter for the lives (number before hearts)
+        gc.setFont(Font.font("Arial", FontWeight.BOLD, 39));
+        gc.setFill(Color.web("#c8a0ff"));
+        gc.fillText(String.valueOf(health), WIDTH - 210, 40);
     }
 
     private void renderMeteor(GraphicsContext gc, Meteor meteor) {
@@ -209,8 +217,36 @@ public class GameScreen implements GameObserver {
         boolean isPowerUp = meteor.getWord().isPowerUP();
 
         // Meteor body
-        Color bodyColor = isPowerUp ? Color.web("#ffcc00", 0.9) : Color.web("#e26bff", 0.9);
-        Color strokeColor = isPowerUp ? Color.web("#ffaa00") : Color.web("#c32fff");
+        Color bodyColor, strokeColor;
+
+        //checks for powerup type and changes meteor colour accordingly, otherwise defaults to purple for normal meteors
+        if (isPowerUp) {
+            PowerUpType type = meteor.getWord().getPowerUpType();
+            switch (type) {
+                case SLOW_METEORS:
+                    bodyColor = Color.web("#87ceeb", 0.9);
+                    strokeColor = Color.web("#4682b4");
+                    break;
+                case FREEZE_METEORS:
+                    bodyColor = Color.web("#00ced1", 0.9);
+                    strokeColor = Color.web("#008b8b");
+                    break;
+                case SHIELD:
+                    bodyColor = Color.web("#32cd32", 0.9);
+                    strokeColor = Color.web("#228b22");
+                    break;
+                case EXTRA_LIFE:
+                    bodyColor = Color.web("#ff6347", 0.9);
+                    strokeColor = Color.web("#dc143c");
+                    break;
+                default:
+                    bodyColor = Color.web("#ffcc00", 0.9);
+                    strokeColor = Color.web("#ffaa00");
+            }
+        } else {
+            bodyColor = Color.web("#e26bff", 0.9);
+            strokeColor = Color.web("#c32fff");
+        }
 
         gc.setFill(bodyColor);
         gc.fillOval(x - 22, y - 22, 44, 44);
@@ -226,10 +262,10 @@ public class GameScreen implements GameObserver {
         double textX = x - wordWidth / 2.0;
         double textY = y + 38;
 
-        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 14));
+        gc.setFont(Font.font("Courier New", FontWeight.BOLD, 17));
 
-        // Typed portion – greyed out
-        gc.setFill(Color.web("#888888"));
+        // Typed portion – active (pink), not grey
+        gc.setFill(Color.web("#ff85d2"));
         gc.fillText(typed, textX, textY);
 
         // Remaining portion – bright
@@ -281,7 +317,7 @@ public class GameScreen implements GameObserver {
 
     private void showEndOverlay(StackPane overlay, boolean won, Runnable returnToMenu) {
         Label title = new Label(won ? "Level Complete!" : "Game Over");
-        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 44));
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 30));
         title.setTextFill(won ? Color.web("#88ff99") : Color.web("#ff6677"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d")));
 
@@ -336,11 +372,20 @@ public class GameScreen implements GameObserver {
         Button b = new Button(text);
         b.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         b.setTextFill(Color.web("#ffe6ff"));
-        b.setStyle("-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
-                   "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37,0,66,0.5); -fx-border-color: #ffe6ff; " +
+                "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(37,0,66,0.7); -fx-border-color: #ffe6ff; " +
+                "-fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        b.setStyle(normalStyle);
         b.setPrefWidth(180);
         b.setPrefHeight(40);
+        attachHover(b, normalStyle, hoverStyle);
         return b;
+    }
+
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(normalStyle));
     }
 
     // Background

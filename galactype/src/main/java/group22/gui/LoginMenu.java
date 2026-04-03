@@ -27,6 +27,10 @@ public class LoginMenu {
 
     private static final int WINDOW_WIDTH = 760;
     private static final int WINDOW_HEIGHT = 520;
+    private static final String PRIMARY_BUTTON_STYLE = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+    private static final String PRIMARY_BUTTON_HOVER_STYLE = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #d453ff, #ff76e0); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+    private static final String SECONDARY_BUTTON_STYLE = "-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+    private static final String SECONDARY_BUTTON_HOVER_STYLE = "-fx-background-color: rgba(60, 0, 110, 0.55); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
 
     private final GameController gameController;
 
@@ -40,7 +44,7 @@ public class LoginMenu {
         root.setPadding(new Insets(16));
 
         Label logoLabel = createLogoLabel();
-        Button exitButton = MainMenu.createTopRightButton("Exit");
+        Button exitButton = MainMenu.createTopRightButton("Quit");
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();
@@ -51,24 +55,16 @@ public class LoginMenu {
         StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
         StackPane.setMargin(exitButton, new Insets(14));
 
-        Button teacherBtn = makePrimaryButton("Login as Teacher");
-        Button studentBtn = makePrimaryButton("Login as Student");
-        Button createBtn  = makeSecondaryButton("Create Account");
-        Button backBtn    = makeSecondaryButton("Back to Main Menu");
-        teacherBtn.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.TEACHER, root, returnToMain)));
-        studentBtn.setOnAction(e -> swapContent(root, createCredentialContent(AccountType.PLAYER,  root, returnToMain)));
-        createBtn.setPrefWidth(220);
-        createBtn.setOnAction(e -> swapContent(root, createRegistrationContent(root, returnToMain)));
-        backBtn.setOnAction(e -> returnToMain.run());
 
-        VBox roleContent = new VBox(18, createScreenTitle("Login"), teacherBtn, studentBtn, createBtn, backBtn);
-        roleContent.setAlignment(Pos.CENTER);
-        roleContent.setPadding(new Insets(28));
 
-        root.getChildren().addAll(roleContent, logoLabel, exitButton);
+        root.getChildren().addAll(
+                createRoleSelectionContent(root, returnToMain),
+                logoLabel,
+                exitButton
+        );
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        MainMenu.applyKeyboardNav(scene, teacherBtn);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
         return scene;
     }
 
@@ -346,14 +342,19 @@ public class LoginMenu {
                 + "-fx-border-width: 2;");
     }
 
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
+    }
+
     private Button makePrimaryButton(String text) {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         button.setTextFill(Color.WHITE);
-        button.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;");
+        button.setStyle(PRIMARY_BUTTON_STYLE);
         button.setPrefWidth(220);
         button.setPrefHeight(52);
         button.setEffect(new DropShadow(10, Color.web("#6100aa", 0.45)));
+        attachHover(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
         return button;
     }
 
@@ -361,10 +362,11 @@ public class LoginMenu {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
-        button.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        button.setStyle(SECONDARY_BUTTON_STYLE);
         button.setPrefWidth(160);
         button.setPrefHeight(38);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        attachHover(button, SECONDARY_BUTTON_STYLE, SECONDARY_BUTTON_HOVER_STYLE);
         return button;
     }
 }

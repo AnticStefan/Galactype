@@ -46,7 +46,7 @@ public class HighScoreMenu {
         root.setPadding(new Insets(16));
 
         Label logoLabel = createLogoLabel();
-        Button exitButton = MainMenu.createTopRightButton("Exit");
+        Button exitButton = MainMenu.createTopRightButton("Quit");
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();
@@ -59,8 +59,10 @@ public class HighScoreMenu {
 
         root.getChildren().addAll(createContent(returnToMain), logoLabel, exitButton);
 
+    
+
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        MainMenu.applyKeyboardNav(scene, null);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
         return scene;
     }
 
@@ -191,10 +193,17 @@ public class HighScoreMenu {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
-        button.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        String normalStyle = "-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        String hoverStyle = "-fx-background-color: rgba(60, 0, 110, 0.55); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+        button.setStyle(normalStyle);
         button.setPrefWidth(160);
         button.setPrefHeight(38);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        attachHover(button, normalStyle, hoverStyle);
         return button;
+    }
+
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
     }
 }

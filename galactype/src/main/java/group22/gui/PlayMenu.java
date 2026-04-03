@@ -1,5 +1,7 @@
 package group22.gui;
 
+import java.util.List;
+
 import group22.Account;
 import group22.GameController;
 import group22.LevelConfig;
@@ -17,8 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.List;
 
 public class PlayMenu {
 
@@ -48,7 +48,7 @@ public class PlayMenu {
         root.getChildren().addAll(createContent(stage, returnToMain), logoLabel, exitButton);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        MainMenu.applyKeyboardNav(scene, null);
+        MainMenu.addMenuBackSpace(scene, returnToMain);
         return scene;
     }
 
@@ -108,10 +108,15 @@ public class PlayMenu {
                     "-fx-background-radius: 14; -fx-border-radius: 14;");
             btn.setDisable(true);
         } else {
-            btn.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); " +
+            String normalStyle = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); " +
                     "-fx-border-color: #ffe6ff; -fx-border-width: 3; " +
-                    "-fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;");
+                    "-fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+            String hoverStyle = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #d453ff, #ff76e0); " +
+                    "-fx-border-color: #ffe6ff; -fx-border-width: 3; " +
+                    "-fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+            btn.setStyle(normalStyle);
             btn.setEffect(new DropShadow(10, Color.web("#6100aa", 0.45)));
+            attachHover(btn, normalStyle, hoverStyle);
         }
 
         return btn;
@@ -140,5 +145,9 @@ public class PlayMenu {
         logoLabel.setTextFill(Color.web("#ffe6ff"));
         logoLabel.setEffect(new DropShadow(10, Color.web("#250042", 0.55)));
         return logoLabel;
+    }
+
+    private void attachHover(Button button, String normalStyle, String hoverStyle) {
+        MainMenu.applyHoverFocusBehavior(button, normalStyle, hoverStyle);
     }
 }

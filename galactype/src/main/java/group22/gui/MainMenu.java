@@ -43,6 +43,12 @@ public class MainMenu extends Application {
     private final GameController gameController = new GameController();
     private static final int WINDOW_WIDTH = 760;
     private static final int WINDOW_HEIGHT = 520;
+    private static final String PRIMARY_BUTTON_STYLE = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+    private static final String PRIMARY_BUTTON_HOVER_STYLE = "-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #d453ff, #ff76e0); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;";
+    private static final String SECONDARY_BUTTON_STYLE = "-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+    private static final String SECONDARY_BUTTON_HOVER_STYLE = "-fx-background-color: rgba(60, 0, 110, 0.55); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+    private static final String TOP_RIGHT_BUTTON_STYLE = "-fx-background-color: transparent; -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
+    private static final String TOP_RIGHT_BUTTON_HOVER_STYLE = "-fx-background-color: rgba(255,255,255,0.08); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;";
 
     @Override
     public void start(Stage stage) {
@@ -65,7 +71,7 @@ public class MainMenu extends Application {
         Button howToPlayButton = makeMenuButton("How to Play");
         Button highScoresButton = makeMenuButton("High Scores");
         Button teacherControlButton = makeMenuButton("Teacher Control");
-        Button exitButton = createTopRightButton("Exit");
+        Button exitButton = createTopRightButton("Quit");
 
         playButton.setOnAction(e -> openPlayMenu(stage));
         loginButton.setDisable(false);
@@ -139,7 +145,7 @@ public class MainMenu extends Application {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(28));
 
-        Button exitButton = createTopRightButton("Exit");
+        Button exitButton = createTopRightButton("Quit");
         exitButton.setOnAction(e -> {
             Platform.exit();
             stage.close();
@@ -236,10 +242,12 @@ public class MainMenu extends Application {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         button.setTextFill(Color.WHITE);
-        button.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #ca3cff, #ff5dd4); -fx-border-color: #ffe6ff; -fx-border-width: 3; -fx-cursor: hand; -fx-background-radius: 14; -fx-border-radius: 14;");
+        button.setStyle(PRIMARY_BUTTON_STYLE);
         button.setPrefWidth(220);
         button.setPrefHeight(52);
         button.setEffect(new DropShadow(10, Color.web("#6100aa", 0.45)));
+        button.setFocusTraversable(true);
+        applyHoverFocusBehavior(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
         return button;
     }
 
@@ -247,10 +255,11 @@ public class MainMenu extends Application {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
-        button.setStyle("-fx-background-color: rgba(37, 0, 66, 0.35); -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        button.setStyle(SECONDARY_BUTTON_STYLE);
         button.setPrefWidth(160);
         button.setPrefHeight(38);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        applyHoverFocusBehavior(button, SECONDARY_BUTTON_STYLE, SECONDARY_BUTTON_HOVER_STYLE);
         return button;
     }
 
@@ -283,14 +292,57 @@ public class MainMenu extends Application {
         }
     }
 
+    private void attachPrimaryHover(Button button) {
+        applyHoverFocusBehavior(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
+    }
+
+    private static void attachHover(Button button, String normalStyle, String hoverStyle) {
+        applyHoverFocusBehavior(button, normalStyle, hoverStyle);
+    }
+
+    public static void applyHoverFocusBehavior(Button button, String normalStyle, String hoverStyle) {
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> {
+            if (!button.isFocused()) {
+                button.setStyle(normalStyle);
+            }
+        });
+        button.focusedProperty().addListener((obs, oldFocused, newFocused) -> {
+            if (newFocused) {
+                button.setStyle(hoverStyle);
+            } else {
+                button.setStyle(normalStyle);
+            }
+        });
+    }
+
+    public static void addMenuBackSpace(Scene scene, Runnable returnToMain) {
+        scene.addEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() != javafx.scene.input.KeyCode.SPACE && e.getCode() != javafx.scene.input.KeyCode.ESCAPE) {
+                return;
+            }
+
+            if (e.getCode() == javafx.scene.input.KeyCode.SPACE && scene.getFocusOwner() instanceof javafx.scene.control.TextInputControl) {
+                // Space should not trigger while typing text
+                return;
+            }
+
+            if (returnToMain != null) {
+                returnToMain.run();
+                e.consume();
+            }
+        });
+    }
+
     static Button createTopRightButton(String text) {
         Button button = new Button(text);
         button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         button.setTextFill(Color.web("#ffe6ff"));
-        button.setStyle("-fx-background-color: transparent; -fx-border-color: #ffe6ff; -fx-border-width: 2; -fx-background-radius: 12; -fx-border-radius: 12; -fx-cursor: hand;");
+        button.setStyle(TOP_RIGHT_BUTTON_STYLE);
         button.setPrefWidth(80);
         button.setPrefHeight(32);
         button.setEffect(new DropShadow(8, Color.web("#000000", 0.25)));
+        applyHoverFocusBehavior(button, TOP_RIGHT_BUTTON_STYLE, TOP_RIGHT_BUTTON_HOVER_STYLE);
         return button;
     }
 
