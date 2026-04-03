@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -50,22 +51,39 @@ public class HowToPlayMenu {
         Label title = createScreenTitle();
 
         Label description = new Label(
-                "Type the falling words before they reach the bottom of the screen.\n\n"
-                        + "Each correct word helps you score points and improve your progress.\n\n"
-                        + "High scores are saved automatically, so keep practicing to climb the leaderboard."
-        );
-        description.setFont(Font.font("Arial", 18));
+                        "1) Words fall from the top as meteors.\n"
+                        + "2) Type each word exactly before it reaches the bottom.\n"
+                        + "3) Correct words give points and improve your score.\n"
+                        + "4) If a word hits the ground, you lose one life.\n"
+                        + "5) You start with 3 lives as hearts; extra lives may appear via power-ups.\n"
+                        + "6) Power-ups appear on meteors (freeze, slow, shield, extra life).\n"
+                        + "7) Use ESC to pause/resume; from pause you can Restart or Quit to Menu.\n"
+                        + "8) The HUD shows Score, Level, WPM, Timer, and Lives at the top.\n"
+                        + "9) Aim for high score and fast typing speed!") ;
+        description.setFont(Font.font("Arial", 17));
         description.setTextFill(Color.web("#f0e5ff"));
         description.setWrapText(true);
-        description.setMaxWidth(520);
-        description.setBackground(new Background(new BackgroundFill(Color.web("#250042", 0.78), new CornerRadii(18), Insets.EMPTY)));
-        description.setPadding(new Insets(20));
-        description.setEffect(new DropShadow(18, Color.web("#130021", 0.45)));
+        description.setMaxWidth(Double.MAX_VALUE);
+
+        ScrollPane scrollPane = new ScrollPane(description);
+        scrollPane.setPrefViewportWidth(600);
+        scrollPane.setPrefViewportHeight(260);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        scrollPane.setPannable(true);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        description.maxWidthProperty().bind(scrollPane.widthProperty().subtract(20));
+
+        VBox infoBox = new VBox();
+        infoBox.setBackground(new Background(new BackgroundFill(Color.web("#250042", 0.78), new CornerRadii(18), Insets.EMPTY)));
+        infoBox.setPadding(new Insets(20));
+        infoBox.setEffect(new DropShadow(18, Color.web("#130021", 0.45)));
+        infoBox.getChildren().add(scrollPane);
 
         Button backButton = makeSecondaryButton("Back to Main Menu");
         backButton.setOnAction(e -> returnToMain.run());
 
-        VBox content = new VBox(24, title, description, backButton);
+        VBox content = new VBox(24, title, infoBox, backButton);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(28));
         return content;
@@ -73,7 +91,7 @@ public class HowToPlayMenu {
 
     private Label createScreenTitle() {
         Label title = new Label("How to Play");
-        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 56));
+        title.setFont(Font.font("Segoe Script", FontWeight.BOLD, 52));
         title.setTextFill(Color.web("#ffe6ff"));
         title.setEffect(new DropShadow(12, Color.web("#2b004d", 0.55)));
         return title;
