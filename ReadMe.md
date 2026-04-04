@@ -33,10 +33,10 @@ Download JDK 17 from [https://adoptium.net](https://adoptium.net) if not already
 A pre-built `galactype.jar` is included in the submission. To run it:
 
 1. Ensure **Java 17+** is installed (`java -version` to check).
-2. Open a terminal in the directory containing `galactype.jar`.
+2. Open the parent directory of galactype
 3. Run:
    ```
-   java -jar galactype.jar
+   java -jar galactype/target/galactype.jar
    ```
 
 The main menu window will open.
@@ -72,7 +72,7 @@ The main menu window will open.
 
 5. Run the built JAR:
    ```
-   java -jar galactype/target/galactype.jar
+   `java -jar galactype/target/galactype.jar`
    ```
 
 ---
