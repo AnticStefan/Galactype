@@ -3,6 +3,9 @@ package group22;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import com.google.gson.JsonArray;
@@ -13,6 +16,10 @@ import com.google.gson.JsonParser;
 import group22.enums.DifficultyLevel;
 import group22.enums.PowerUpType;
 
+/**
+ * Loads and stores the game's vocabulary, organized by difficulty tier and powerup status.
+ * Provides random word selection for use during game sessions.
+ */
 public class WordBank {
     private ArrayList<String> easyWords = new ArrayList<>();
     private ArrayList<String> mediumWords = new ArrayList<>();
@@ -21,10 +28,21 @@ public class WordBank {
     private ArrayList<Word> powerUpWords = new ArrayList<>();
     private String dataFilePath;
 
+    /**
+     * Constructs a WordBank that will read word data from the given file path.
+     * Call {@link #load()} before using any word retrieval methods.
+     *
+     * @param dataFilePath the path to the JSON word bank data file
+     */
     public WordBank(String dataFilePath){
         this.dataFilePath = dataFilePath;
     }
 
+    /**
+     * Clears all existing words and reloads the word bank from the JSON data file.
+     *
+     * @throws RuntimeException if the file cannot be read
+     */
     //method to load words from the data file into the word bank
     public void load(){
         //clearing in case there was values in wordbank before loading new ones in
@@ -34,7 +52,7 @@ public class WordBank {
         doomWords.clear();
         powerUpWords.clear();
 
-        //try for reading files 
+        //try for reading files
         try (FileReader reader = new FileReader(dataFilePath)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
 
@@ -43,19 +61,52 @@ public class WordBank {
             loadSection(root, "medium", DifficultyLevel.MEDIUM, mediumWords);
             loadSection(root, "hard", DifficultyLevel.HARD, hardWords);
             loadSection(root, "doom", DifficultyLevel.DOOM, doomWords);
-        }  
-        //catch if reading fails 
-        catch (IOException e) {  
+        }
+        //catch if reading fails
+        catch (IOException e) {
             throw new RuntimeException("Failed to load word bank from " + dataFilePath, e);
         }
     }
 
+    /**
+     * Clears all existing words and reloads the word bank from the given InputStream.
+     * Use this when running from a JAR where the word bank is a bundled resource.
+     *
+     * @param is an InputStream for the word bank JSON data
+     */
+    public void load(InputStream is) {
+        easyWords.clear();
+        mediumWords.clear();
+        hardWords.clear();
+        doomWords.clear();
+        powerUpWords.clear();
+
+        try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            loadSection(root, "easy", DifficultyLevel.EASY, easyWords);
+            loadSection(root, "medium", DifficultyLevel.MEDIUM, mediumWords);
+            loadSection(root, "hard", DifficultyLevel.HARD, hardWords);
+            loadSection(root, "doom", DifficultyLevel.DOOM, doomWords);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load word bank from stream", e);
+        }
+    }
+
+    /**
+     * Parses a single difficulty section from the JSON root object, adding plain words to
+     * {@code targetWords} and any powerup words to the shared powerup list.
+     *
+     * @param root        the root JSON object of the word bank file
+     * @param sectionName the JSON key for the difficulty section (e.g. "easy")
+     * @param difficulty  the {@link DifficultyLevel} to assign to words in this section
+     * @param targetWords the list to add plain word strings into
+     */
     //helper method to load words from JSON and is used in load
-    /* 
+    /*
     finds the requestions JSON section then loops through each word object in the section
     pulls out the text value and adds it to the word list
-    if the word is marked as a power up, it also creates a word objects with the associated difficulty and poweruptype 
-    then stores the powerup word in the Arraylist<word> for powerups     
+    if the word is marked as a power up, it also creates a word objects with the associated difficulty and poweruptype
+    then stores the powerup word in the Arraylist<word> for powerups
     */
     private void loadSection(JsonObject root, String sectionName, DifficultyLevel difficulty, ArrayList<String> targetWords) {
         //makes sure each section exists in the JSON before going through it
@@ -63,13 +114,13 @@ public class WordBank {
             return;
         }
 
-        //get the array of words for each difficulty section 
+        //get the array of words for each difficulty section
         JsonArray section = root.getAsJsonArray(sectionName);
 
 
         for (JsonElement element : section) {
 
-            //if its not a json object, skip 
+            //if its not a json object, skip
             if (!element.isJsonObject()) {
                 continue;
             }
@@ -77,7 +128,7 @@ public class WordBank {
             //convert current element in section to json objects
             JsonObject wordObject = element.getAsJsonObject();
 
-            //skip the entry in the json if there is no text field 
+            //skip the entry in the json if there is no text field
             if (!wordObject.has("text")) {
                 continue;
             }
@@ -85,7 +136,7 @@ public class WordBank {
             //read the word from text
             String text = wordObject.get("text").getAsString();
 
-            //make sure its not empty or blank 
+            //make sure its not empty or blank
             if (text == null || text.isBlank()) {
                 continue;
             }
@@ -94,13 +145,13 @@ public class WordBank {
             targetWords.add(text);
 
             //check for if its a powerup.
-            //if it is a powerup, store in powerUpWords arraylist 
+            //if it is a powerup, store in powerUpWords arraylist
            boolean isPowerUp = wordObject.has("isPowerUp") && wordObject.get("isPowerUp").getAsBoolean();
 
-            // If it is a power-up word, also store it in the powerUpWords list
+            // If it is a powerup word, also store it in the powerUpWords list
             if (isPowerUp) {
 
-                // Get the power-up type from the JSON if it exists
+                // Get the powerup type from the JSON if it exists
                 String powerUpTypeString = null;
 
                 if (wordObject.has("powerUpType")) {
@@ -110,7 +161,7 @@ public class WordBank {
                 // Convert the JSON string into the PowerUpType enum used in Java
                 PowerUpType powerUpType = parsePowerUpType(powerUpTypeString);
 
-                // Only create the Word object if the power-up type was valid
+                // Only create the Word object if the powerup type was valid
                 if (powerUpType != null) {
                     powerUpWords.add(new Word(text, difficulty, powerUpType));
                 }
@@ -118,9 +169,16 @@ public class WordBank {
         }
     }
 
+    /**
+     * Converts a raw string from JSON into the matching {@link PowerUpType} enum constant.
+     * Returns {@code null} if the string is blank or does not match any known type.
+     *
+     * @param powerUpTypeString the raw string value from the JSON file
+     * @return the matching {@link PowerUpType}, or {@code null} if invalid or missing
+     */
     private PowerUpType parsePowerUpType(String powerUpTypeString) {
 
-    // If the JSON value is missing or blank return null 
+    // If the JSON value is missing or blank return null
     if (powerUpTypeString == null || powerUpTypeString.trim().isEmpty()) {
         return null;
     }
@@ -139,9 +197,16 @@ public class WordBank {
         return null;
     }
 }
-    
+
+    /**
+     * Returns a single random word at the specified difficulty level.
+     *
+     * @param difficulty the {@link DifficultyLevel} of the word to retrieve
+     * @return a randomly selected {@link Word} at the given difficulty
+     * @throws IllegalStateException if no words are loaded for the given difficulty
+     */
     public Word getRandomWord(DifficultyLevel difficulty) {
-        ArrayList<String> wordList; //word list depending on the switch case below 
+        ArrayList<String> wordList; //word list depending on the switch case below
 
         //switch case based on difficulty level to set wordlist to the correct bank
         switch (difficulty) {
@@ -169,15 +234,15 @@ public class WordBank {
         int randomIndex = (int) (Math.random() * wordList.size());
 
         //returning the wordlist at the random index geerated above and at the set difficulty level
-        return new Word(wordList.get(randomIndex), difficulty); 
+        return new Word(wordList.get(randomIndex), difficulty);
     }
 
     /**
-     * Method that returns an arraylist of random words based on the difficulty and count parameters. 
+     * Method that returns an arraylist of random words based on the difficulty and count parameters.
      * <p>
      * It calls the getRandomWord method in this class, in a loop and adds the result to an arraylist which is then returned.
      * the loop increments until the count parameter has been reached
-     * 
+     *
      * @param difficulty the difficulty level of the words to be returned
      * @param count the number of random words to be returned
      * @return an ArrayList of random words based on the difficulty and count parameters
@@ -194,17 +259,41 @@ public class WordBank {
 
         return randomWords;
     }
-    
-    
+
+    /**
+     * Returns a random powerup word at or below the specified difficulty level.
+     * Falls back to all powerup words if none qualify at the given difficulty.
+     *
+     * @param difficulty the maximum {@link DifficultyLevel} to consider for eligible powerup words
+     * @return a randomly selected powerup {@link Word}
+     * @throws IllegalStateException if no powerup words have been loaded
+     */
     public Word getPowerUpWord(DifficultyLevel difficulty){
         if (powerUpWords.isEmpty()) {
-            throw new IllegalStateException("No power-up words loaded");
+            throw new IllegalStateException("No powerup words loaded");
         }
-        int randomIndex = (int) (Math.random() * powerUpWords.size());
-        return powerUpWords.get(randomIndex);
+        // Only allow powerup words at or below the current level's difficulty
+        ArrayList<Word> eligible = new ArrayList<>();
+        for (Word w : powerUpWords) {
+            if (w.getDifficulty().ordinal() <= difficulty.ordinal()) {
+                eligible.add(w);
+            }
+        }
+        // Fall back to all powerup words if none qualify at this difficulty
+        if (eligible.isEmpty()) {
+            eligible = powerUpWords;
+        }
+        int randomIndex = (int) (Math.random() * eligible.size());
+        return eligible.get(randomIndex);
     }
-    
 
+    /**
+     * Returns the number of words loaded for the specified difficulty level.
+     *
+     * @param difficulty the {@link DifficultyLevel} to count words for
+     * @return the number of words in that difficulty tier
+     * @throws IllegalStateException if the difficulty value is unrecognized
+     */
    public int getWordCount(DifficultyLevel difficulty){
 
     switch (difficulty) {
