@@ -72,7 +72,7 @@ The main menu window will open.
 
 5. Run the built JAR:
    ```
-   java -jar target/galactype.jar
+   java -jar galactype/target/galactype.jar
    ```
 
 ---
