@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Represents a single active game session, managing meteor spawning, player input,
+ * power-up effects, scoring, health, and observer notifications for one level run.
+ */
 public class GameSession implements Observable {
 
     // TENTATIVE TENTATIVE TENTATIVE
@@ -37,6 +41,14 @@ public class GameSession implements Observable {
     private int totalErrors;
     private Meteor targetMeteor;
 
+    /**
+     * Constructs a new GameSession for the given level configuration.
+     *
+     * @param config    the {@link LevelConfig} defining this level's parameters
+     * @param wordBank  the {@link WordBank} to draw words from during the session
+     * @param highScore the player's existing high score for this level (used by ScoreManager)
+     * @param maxHealth the number of lives the player starts with
+     */
     public GameSession(LevelConfig config, WordBank wordBank, int highScore, int maxHealth) {
         this.levelConfig = config;
         this.wordBank = wordBank;
@@ -50,11 +62,17 @@ public class GameSession implements Observable {
         this.random = new Random();
     }
 
+    /**
+     * Transitions the session to the RUNNING state and notifies observers.
+     */
     public void start() {
         state = GameState.RUNNING;
         notifyObservers();
     }
 
+    /**
+     * Pauses the session if it is currently running and notifies observers.
+     */
     public void pause() {
         if (state == GameState.RUNNING) {
             state = GameState.PAUSED;
@@ -62,6 +80,9 @@ public class GameSession implements Observable {
         }
     }
 
+    /**
+     * Resumes the session if it is currently paused and notifies observers.
+     */
     public void resume() {
         if (state == GameState.PAUSED) {
             state = GameState.RUNNING;
@@ -69,11 +90,20 @@ public class GameSession implements Observable {
         }
     }
 
+    /**
+     * Immediately ends the session by setting its state to GAME_OVER and notifying observers.
+     */
     public void end() {
         state = GameState.GAME_OVER;
         notifyObservers();
     }
 
+    /**
+     * Advances the session by one frame: updates elapsed time, spawns meteors,
+     * moves meteors, checks collisions, recalculates WPM, and expires power-ups.
+     *
+     * @param deltaTime elapsed time since the last frame, in seconds
+     */
     // Called every frame. deltaTime is in seconds.
     public void update(float deltaTime) {
         if (state != GameState.RUNNING) return;
@@ -113,12 +143,23 @@ public class GameSession implements Observable {
         activePowerUps.removeIf(PowerUp::isExpired);
     }
 
+    /**
+     * Processes a single character typed by the player during a running session.
+     *
+     * @param character the character that was typed
+     */
     // Called by the UI on each keypress
     public void onKeyTyped(char character) {
         if (state != GameState.RUNNING) return;
         matchTypingToMeteor(character);
     }
 
+    /**
+     * Attempts to match the typed character against the currently targeted meteor,
+     * or acquires a new target if none is locked. Awards points or penalises errors accordingly.
+     *
+     * @param character the character that was typed
+     */
     private void matchTypingToMeteor(char character) {
         // If no target locked, find a meteor whose next expected character matches
         if (targetMeteor == null || targetMeteor.isDestroyed()) {
@@ -168,6 +209,10 @@ public class GameSession implements Observable {
         }
     }
 
+    /**
+     * Spawns a new meteor with a randomly selected word and a collision-safe x position.
+     * Retries word selection up to 20 times to avoid meteors sharing a first letter.
+     */
     private void spawnMeteor() {
         // Pick a word, retrying up to 20 times to avoid duplicate starting letters
         Word word;
@@ -193,6 +238,12 @@ public class GameSession implements Observable {
         activeMeteors.add(new Meteor(word, x, levelConfig.getMeteorSpeed()));
     }
 
+    /**
+     * Checks whether any active meteor already starts with the same letter as the candidate word.
+     *
+     * @param candidate the {@link Word} to check for a first-letter conflict
+     * @return {@code true} if a conflict exists; {@code false} otherwise
+     */
     private boolean hasConflictingFirstLetter(Word candidate) {
         if (candidate.getText().isEmpty()) return false;
         char first = Character.toLowerCase(candidate.getText().charAt(0));
@@ -207,6 +258,10 @@ public class GameSession implements Observable {
         return false;
     }
 
+    /**
+     * Checks all active meteors for bottom-of-screen collisions, applies shield or
+     * health loss as appropriate, and triggers GAME_OVER if health reaches zero.
+     */
     private void checkMeteorCollisions() {
         for (Meteor meteor : activeMeteors) {
             if (!meteor.isDestroyed() && meteor.hasReachedBottom(SCREEN_HEIGHT)) {
@@ -239,6 +294,12 @@ public class GameSession implements Observable {
         activeMeteors.removeIf(Meteor::isDestroyed);
     }
 
+    /**
+     * Activates the given power-up type, applying its effect immediately or scheduling
+     * it for time-based expiry.
+     *
+     * @param type the {@link PowerUpType} to apply
+     */
     private void applyPowerUp(PowerUpType type) {
         if (type == PowerUpType.EXTRA_LIFE) {
             health = Math.min(health + 1, maxHealth);
@@ -251,6 +312,12 @@ public class GameSession implements Observable {
         activePowerUps.add(powerUp);
     }
 
+    /**
+     * Checks whether any active power-up of the given type is currently in effect.
+     *
+     * @param type the {@link PowerUpType} to query
+     * @return {@code true} if an active power-up of that type exists; {@code false} otherwise
+     */
     private boolean isPowerUpActive(PowerUpType type) {
         for (PowerUp p : activePowerUps) {
             if (p.getType() == type && p.isActive()) return true;
@@ -258,12 +325,20 @@ public class GameSession implements Observable {
         return false;
     }
 
+    /**
+     * Recalculates and stores the player's current words-per-minute based on elapsed time.
+     */
     private void calculateCurrentWPM() {
         if (elapsedTimeMs == 0) return;
         float minutes = elapsedTimeMs / 60000f;
         currentWPM = wordsCompleted / minutes;
     }
 
+    /**
+     * Constructs a {@link SessionResult} summarising the outcome of this session.
+     *
+     * @return a {@link SessionResult} containing score, accuracy, WPM, and other stats
+     */
     public SessionResult buildSessionResult() {
         int totalAttempts = wordsCompleted + totalErrors;
         float accuracy = totalAttempts == 0 ? 100f : (wordsCompleted / (float) totalAttempts) * 100f;
@@ -279,44 +354,97 @@ public class GameSession implements Observable {
         );
     }
 
+    /**
+     * Returns the list of meteors currently on screen.
+     *
+     * @return the active {@link List} of {@link Meteor} objects
+     */
     // Getters used by the UI and GameController
     public List<Meteor> getActiveMeteors()  {
-        return activeMeteors; 
+        return activeMeteors;
     }
-    
+
+    /**
+     * Returns the list of currently active power-ups.
+     *
+     * @return the active {@link List} of {@link PowerUp} objects
+     */
     public List<PowerUp> getActivePowerUps() {
-        return activePowerUps; 
+        return activePowerUps;
     }
 
-    public GameState getState() { 
-        return state; 
+    /**
+     * Returns the current state of this game session.
+     *
+     * @return the {@link GameState} of this session
+     */
+    public GameState getState() {
+        return state;
     }
 
-    public int getHealth() { 
-        return health; 
+    /**
+     * Returns the player's remaining health (lives).
+     *
+     * @return the current health value
+     */
+    public int getHealth() {
+        return health;
     }
 
-    public float getCurrentWPM() { 
-        return currentWPM; 
-    }
-    
-    public ScoreManager getScoreManager() { 
-        return scoreManager; 
-    }
-
-    public long getElapsedTimeMs() { 
-        return elapsedTimeMs; 
+    /**
+     * Returns the player's current words-per-minute typing speed.
+     *
+     * @return the current WPM as a float
+     */
+    public float getCurrentWPM() {
+        return currentWPM;
     }
 
+    /**
+     * Returns the score manager tracking points for this session.
+     *
+     * @return the {@link ScoreManager} for this session
+     */
+    public ScoreManager getScoreManager() {
+        return scoreManager;
+    }
+
+    /**
+     * Returns the total elapsed time of this session.
+     *
+     * @return elapsed time in milliseconds
+     */
+    public long getElapsedTimeMs() {
+        return elapsedTimeMs;
+    }
+
+    /**
+     * Registers an observer to receive game state and score notifications.
+     *
+     * @param observer the {@link GameObserver} to add
+     */
     @Override
     public void addObserver(GameObserver observer) {observers.add(observer);}
+
+    /**
+     * Unregisters a previously added observer.
+     *
+     * @param observer the {@link GameObserver} to remove
+     */
     @Override
     public void removeObserver(GameObserver observer) {observers.remove(observer);}
+
+    /**
+     * Notifies all registered observers of a game state change.
+     */
     @Override
     public void notifyObservers() {
         for (GameObserver o : observers) o.onGameStateChanged(state);
     }
 
+    /**
+     * Notifies all registered observers that the score has changed.
+     */
     private void notifyScoreChanged() {
         for (GameObserver o : observers) o.onScoreChanged(scoreManager.getCurrentScore());
     }

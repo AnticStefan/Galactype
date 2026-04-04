@@ -1,15 +1,22 @@
-package group22; 
+package group22;
 
 import group22.enums.DifficultyLevel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages the ordered collection of game levels and tracks which level is currently active.
+ * Provides navigation (advance, set by number) and lookup methods for the UI and GameController.
+ */
 public class LevelManager {
 
-    private List<LevelConfig> levels; 
+    private List<LevelConfig> levels;
     private int currentLevelIndex;
 
+    /**
+     * Constructs a LevelManager, initializes the level list, and populates the default levels.
+     */
     // Sets up the level list and starts at the first level.
     public LevelManager(){
         this.levels = new ArrayList<>();
@@ -17,6 +24,11 @@ public class LevelManager {
         initializeLevels();
     }
 
+    /**
+     * Returns the configuration for the level that is currently active.
+     *
+     * @return the current {@link LevelConfig}, or {@code null} if no levels are configured
+     */
     // Returns the currently active level configuration.
     public LevelConfig getCurrentLevel(){
         if (levels.isEmpty()) {
@@ -25,6 +37,12 @@ public class LevelManager {
         return levels.get(currentLevelIndex);
     }
 
+    /**
+     * Finds and returns the level configuration with the given level number.
+     *
+     * @param levelNumber the 1-based level number to look up
+     * @return the matching {@link LevelConfig}, or {@code null} if not found
+     */
     // Finds a level configuration by its level number.
     public LevelConfig getLevelByNumber(int levelNumber){
         for (LevelConfig level : levels) {
@@ -35,6 +53,11 @@ public class LevelManager {
         return null;
     }
 
+    /**
+     * Advances the current level index to the next level if one exists.
+     *
+     * @return {@code true} if the level was advanced; {@code false} if already on the last level
+     */
     // Moves to the next level when one is available.
     public boolean advanceLevel(){
         if (isLastLevel()) {
@@ -45,6 +68,12 @@ public class LevelManager {
         return true;
     }
 
+    /**
+     * Sets the active level to the one matching the given level number.
+     * Does nothing if no level with that number exists.
+     *
+     * @param levelNumber the 1-based level number to switch to
+     */
     // Sets the current level using a matching level number
     public void setLevel(int levelNumber){
         for (int i = 0; i < levels.size(); i++) {
@@ -55,21 +84,40 @@ public class LevelManager {
         }
     }
 
+    /**
+     * Returns the total number of levels configured in this manager.
+     *
+     * @return the number of levels
+     */
     // Returns the total number of configured levels
     public int getTotalLevels(){
         return levels.size();
     }
 
+    /**
+     * Checks whether the currently active level is the final one.
+     *
+     * @return {@code true} if the current level is the last level; {@code false} otherwise
+     */
     // Checks whether the current level is the final one
     public boolean isLastLevel(){
         return !levels.isEmpty() && currentLevelIndex == levels.size() - 1;
     }
 
+    /**
+     * Returns a copy of the complete list of configured levels.
+     *
+     * @return a new {@link List} containing all {@link LevelConfig} objects
+     */
     // Returns a copy of all configured levels
     public List<LevelConfig> getAllLevels(){
         return new ArrayList<>(levels);
     }
 
+    /**
+     * Populates the level list with the default set of planet-themed levels,
+     * ordered by distance from the sun: Mercury through Neptune.
+     */
     // Builds the default set of level configurations.
     // One level per planet, ordered by distance from the sun: Mercury → Neptune.
     private void initializeLevels(){

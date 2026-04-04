@@ -1,7 +1,5 @@
 package group22.gui;
 
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -292,14 +290,6 @@ public class MainMenu extends Application {
         }
     }
 
-    // private void attachPrimaryHover(Button button) {
-    //     applyHoverFocusBehavior(button, PRIMARY_BUTTON_STYLE, PRIMARY_BUTTON_HOVER_STYLE);
-    // }
-
-    // private static void attachHover(Button button, String normalStyle, String hoverStyle) {
-    //     applyHoverFocusBehavior(button, normalStyle, hoverStyle);
-    // }
-
     public static void applyHoverFocusBehavior(Button button, String normalStyle, String hoverStyle) {
         button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
         button.setOnMouseExited(e -> {
@@ -353,21 +343,11 @@ public class MainMenu extends Application {
 
     private void initializeController() {
         Path dataPath = Paths.get("data");
-        Path wordBankPath = resolveWordBankPath();
-        gameController.initialize(dataPath.toString(), wordBankPath.toString());
-    }
-
-    private Path resolveWordBankPath() {
-        URL resource = MainMenu.class.getResource("/word.json");
-        if (resource == null) {
+        java.io.InputStream wordBankStream = MainMenu.class.getResourceAsStream("/word.json");
+        if (wordBankStream == null) {
             throw new IllegalStateException("Could not find word.json in resources.");
         }
-
-        try {
-            return Paths.get(resource.toURI());
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Invalid word.json resource path.", e);
-        }
+        gameController.initialize(dataPath.toString(), wordBankStream);
     }
 
     public static void main(String[] args) {

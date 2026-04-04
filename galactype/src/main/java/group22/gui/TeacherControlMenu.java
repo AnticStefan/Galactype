@@ -141,6 +141,7 @@ public class TeacherControlMenu {
 
     // Main controls panel
 
+    // ASSISTED BY CLAUDE SONNET 4.6
     /** Shows the full controls panel once a teacher is authenticated. */
     private void showControlsPanel() {
         Label logoLabel = new Label("Galactype");
@@ -257,6 +258,7 @@ public class TeacherControlMenu {
      * Shows account creation (new player) and management controls
      * (reset password, reset statistics) for existing players.
      */
+    // ASSISTED BY CLAUDE SONNET 4.6
     private void showAccountManagementView(StackPane contentArea) {
         List<PlayerAccount> players = gameController.getAccountManager().getAllPlayerAccounts();
 

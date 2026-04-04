@@ -138,7 +138,7 @@ public class GameScreen implements GameObserver {
         return scene;
     }
 
-    // ── Rendering ─────────────────────────────────────────────────────────────
+    // Rendering 
 
     private void render(GraphicsContext gc) {
         gc.clearRect(0, 0, WIDTH, HEIGHT);
@@ -224,6 +224,7 @@ public class GameScreen implements GameObserver {
 
     }
 
+    // ASSISTED BY CLAUDE SONNET 4.6
     private void renderMeteor(GraphicsContext gc, Meteor meteor) {
         float x = meteor.getXPosition();
         float y = meteor.getYPosition() + HUD_HEIGHT; // shift down by HUD
@@ -408,7 +409,7 @@ public class GameScreen implements GameObserver {
     }
 
     // Background
-
+    // ASSISTED BY CLAUDE SONNET 4.6
     private Pane createSpaceBg(String backgroundAsset) {
         Pane bg = new Pane();
         bg.setPrefSize(WIDTH, HEIGHT);
